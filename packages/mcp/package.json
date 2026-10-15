@@ -1,0 +1,63 @@
+{
+	"name": "@adginr/google-ads-mcp",
+	"version": "0.0.0",
+	"description": "Model Context Protocol server for the Google Ads API over REST: GAQL search, keywords, ads, assets, budgets.",
+	"keywords": [
+		"google-ads",
+		"google-ads-api",
+		"mcp",
+		"model-context-protocol",
+		"mcp-server",
+		"claude",
+		"ai-agent"
+	],
+	"homepage": "https://github.com/adginr/google-ads-rest/tree/main/packages/mcp#readme",
+	"bugs": "https://github.com/adginr/google-ads-rest/issues",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/adginr/google-ads-rest.git",
+		"directory": "packages/mcp"
+	},
+	"license": "Apache-2.0",
+	"author": "Kolin (https://adginr.com)",
+	"type": "module",
+	"engines": {
+		"node": ">=22"
+	},
+	"bin": {
+		"google-ads-mcp": "./dist/cli.js"
+	},
+	"exports": {
+		".": "./src/index.ts",
+		"./package.json": "./package.json"
+	},
+	"files": [
+		"dist",
+		"LICENSE",
+		"NOTICE"
+	],
+	"scripts": {
+		"build": "tsdown",
+		"start": "node src/cli.ts",
+		"typecheck": "tsc --noEmit",
+		"check:package": "publint --strict",
+		"prepack": "cp ../../LICENSE ../../NOTICE ."
+	},
+	"dependencies": {
+		"@adginr/google-ads-rest": "workspace:^",
+		"@modelcontextprotocol/node": "^2.1.1",
+		"@modelcontextprotocol/server": "^2.3.1",
+		"zod": "^4.6.7"
+	},
+	"publishConfig": {
+		"access": "public",
+		"provenance": true,
+		"exports": {
+			".": {
+				"types": "./dist/index.d.ts",
+				"default": "./dist/index.js"
+			},
+			"./package.json": "./package.json"
+		}
+	}
+}

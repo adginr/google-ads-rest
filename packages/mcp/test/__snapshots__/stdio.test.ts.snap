@@ -1,0 +1,293 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`google-ads-mcp over stdio > lists every tool with its required inputs and hints 1`] = `
+[
+  {
+    "destructive": false,
+    "name": "list_accessible_customers",
+    "readOnly": true,
+    "required": [],
+  },
+  {
+    "destructive": false,
+    "name": "list_campaigns",
+    "readOnly": true,
+    "required": [
+      "customerId",
+    ],
+  },
+  {
+    "destructive": false,
+    "name": "get_resource_metadata",
+    "readOnly": true,
+    "required": [
+      "resource",
+    ],
+  },
+  {
+    "destructive": false,
+    "name": "search",
+    "readOnly": true,
+    "required": [
+      "customerId",
+      "resource",
+      "fields",
+    ],
+  },
+  {
+    "destructive": false,
+    "name": "generate_keyword_ideas",
+    "readOnly": true,
+    "required": [
+      "customerId",
+    ],
+  },
+  {
+    "destructive": false,
+    "name": "pause_campaign",
+    "readOnly": false,
+    "required": [
+      "customerId",
+      "campaignId",
+    ],
+  },
+  {
+    "destructive": false,
+    "name": "enable_campaign",
+    "readOnly": false,
+    "required": [
+      "customerId",
+      "campaignId",
+    ],
+  },
+  {
+    "destructive": false,
+    "name": "update_campaign_budget",
+    "readOnly": false,
+    "required": [
+      "customerId",
+      "campaignId",
+      "dailyBudget",
+    ],
+  },
+  {
+    "destructive": false,
+    "name": "create_ad_group",
+    "readOnly": false,
+    "required": [
+      "customerId",
+      "campaignId",
+      "name",
+    ],
+  },
+  {
+    "destructive": true,
+    "name": "update_ad_group_status",
+    "readOnly": false,
+    "required": [
+      "customerId",
+      "adGroupId",
+      "status",
+    ],
+  },
+  {
+    "destructive": false,
+    "name": "add_keywords_to_ad_group",
+    "readOnly": false,
+    "required": [
+      "customerId",
+      "adGroupId",
+      "keywords",
+      "matchType",
+    ],
+  },
+  {
+    "destructive": true,
+    "name": "remove_keyword_from_ad_group",
+    "readOnly": false,
+    "required": [
+      "customerId",
+      "adGroupId",
+    ],
+  },
+  {
+    "destructive": false,
+    "name": "add_negative_keyword_to_ad_group",
+    "readOnly": false,
+    "required": [
+      "customerId",
+      "adGroupId",
+      "keyword",
+    ],
+  },
+  {
+    "destructive": false,
+    "name": "add_negative_keyword_to_campaign",
+    "readOnly": false,
+    "required": [
+      "customerId",
+      "campaignId",
+      "keyword",
+    ],
+  },
+  {
+    "destructive": true,
+    "name": "remove_negative_keyword_from_campaign",
+    "readOnly": false,
+    "required": [
+      "customerId",
+      "campaignId",
+      "keyword",
+    ],
+  },
+  {
+    "destructive": false,
+    "name": "list_ads_in_ad_group",
+    "readOnly": true,
+    "required": [
+      "customerId",
+      "adGroupId",
+    ],
+  },
+  {
+    "destructive": false,
+    "name": "create_responsive_search_ad",
+    "readOnly": false,
+    "required": [
+      "customerId",
+      "adGroupId",
+      "headlines",
+      "descriptions",
+      "finalUrls",
+    ],
+  },
+  {
+    "destructive": true,
+    "name": "update_ad_status",
+    "readOnly": false,
+    "required": [
+      "customerId",
+      "adGroupId",
+      "adId",
+      "status",
+    ],
+  },
+  {
+    "destructive": false,
+    "name": "list_callouts",
+    "readOnly": true,
+    "required": [
+      "customerId",
+      "level",
+    ],
+  },
+  {
+    "destructive": false,
+    "name": "create_callouts",
+    "readOnly": false,
+    "required": [
+      "customerId",
+      "texts",
+    ],
+  },
+  {
+    "destructive": false,
+    "name": "attach_callouts_to_campaign",
+    "readOnly": false,
+    "required": [
+      "customerId",
+      "campaignId",
+      "assets",
+    ],
+  },
+  {
+    "destructive": false,
+    "name": "attach_callouts_to_account",
+    "readOnly": false,
+    "required": [
+      "customerId",
+      "assets",
+    ],
+  },
+  {
+    "destructive": false,
+    "name": "update_callout_link_status",
+    "readOnly": false,
+    "required": [
+      "customerId",
+      "level",
+      "links",
+      "status",
+    ],
+  },
+  {
+    "destructive": true,
+    "name": "remove_callout_links",
+    "readOnly": false,
+    "required": [
+      "customerId",
+      "level",
+      "links",
+    ],
+  },
+  {
+    "destructive": false,
+    "name": "list_sitelinks",
+    "readOnly": true,
+    "required": [
+      "customerId",
+      "level",
+    ],
+  },
+  {
+    "destructive": false,
+    "name": "create_sitelinks",
+    "readOnly": false,
+    "required": [
+      "customerId",
+      "sitelinks",
+    ],
+  },
+  {
+    "destructive": false,
+    "name": "attach_sitelinks_to_campaign",
+    "readOnly": false,
+    "required": [
+      "customerId",
+      "campaignId",
+      "assets",
+    ],
+  },
+  {
+    "destructive": false,
+    "name": "attach_sitelinks_to_ad_group",
+    "readOnly": false,
+    "required": [
+      "customerId",
+      "adGroupId",
+      "assets",
+    ],
+  },
+  {
+    "destructive": false,
+    "name": "update_sitelink_link_status",
+    "readOnly": false,
+    "required": [
+      "customerId",
+      "level",
+      "links",
+      "status",
+    ],
+  },
+  {
+    "destructive": true,
+    "name": "remove_sitelink_links",
+    "readOnly": false,
+    "required": [
+      "customerId",
+      "level",
+      "links",
+    ],
+  },
+]
+`;
