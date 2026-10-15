@@ -1,6 +1,6 @@
 {
 	"name": "@adginr/google-ads-mcp",
-	"version": "0.0.0",
+	"version": "0.1.0",
 	"description": "Model Context Protocol server for the Google Ads API over REST: GAQL search, keywords, ads, assets, budgets.",
 	"keywords": [
 		"google-ads",
