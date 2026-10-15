@@ -1,0 +1,15 @@
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+.DS_Store
+
+# Credentials: never commit
+.env
+.env.*
+!.env.example
+client_secret_*.json
+
+# Copied from the repo root by prepack
+packages/*/LICENSE
+packages/*/NOTICE

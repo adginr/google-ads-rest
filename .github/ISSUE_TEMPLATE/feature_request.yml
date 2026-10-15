@@ -1,0 +1,16 @@
+name: Feature request
+description: A new tool, client method or option.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What do you want to do
+      description: The task in Google Ads terms, e.g. "add sitelinks to all ad groups of a campaign".
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed tool or API
+      description: Name, inputs and output, and the Google Ads API resources it touches.

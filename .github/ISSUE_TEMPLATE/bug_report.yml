@@ -1,0 +1,44 @@
+name: Bug report
+description: Something does not work as documented.
+labels: [bug]
+body:
+  - type: dropdown
+    id: package
+    attributes:
+      label: Package
+      options:
+        - '@adginr/google-ads-rest'
+        - '@adginr/google-ads-mcp'
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Package version
+      placeholder: 0.1.0
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: Tool name and input, or the code you ran. Remove customer IDs and anything secret.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: textarea
+    id: error
+    attributes:
+      label: Error output
+      description: The full error message, including Google Ads error codes and the request ID if present.
+      render: text
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: Node 24.1, macOS 15, Claude Code 2.x
