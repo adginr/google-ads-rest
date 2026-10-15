@@ -32,3 +32,9 @@ jobs:
           commit: Version packages
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Granular npm token for publishing. Once trusted publishing is configured for both packages on
+          # npmjs.com (repo adginr/google-ads-rest, workflow release.yml), delete the NPM_TOKEN secret:
+          # npm then authenticates this workflow through OIDC.
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: 'true'
