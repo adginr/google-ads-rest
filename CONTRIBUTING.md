@@ -44,4 +44,7 @@ Prefer read-only tools and `validateOnly: true` when testing mutations on a live
 ## Releases
 
 Merging to `main` with pending changesets opens a "Version packages" pull request. Merging that publishes to
-npm with provenance.
+npm through trusted publishing (no token, with provenance) and creates the git tags and GitHub releases.
+
+The "Version packages" pull request is opened by GitHub Actions, which does not trigger CI on its own pull
+requests. Close and reopen it once to run the required checks before merging.
