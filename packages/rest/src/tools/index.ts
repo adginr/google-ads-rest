@@ -16,6 +16,7 @@ import {
 } from './callouts.ts';
 import { enableCampaign, pauseCampaign, updateCampaignBudget } from './campaigns.ts';
 import type { AdsTool } from './define-tool.ts';
+import { suggestGeoTargets } from './geo-targets.ts';
 import { generateKeywordIdeas } from './keyword-planner.ts';
 import {
 	addKeywordsToAdGroup,
@@ -44,6 +45,7 @@ export const adsTools = [
 	listCampaigns,
 	getResourceMetadata,
 	search,
+	suggestGeoTargets,
 	generateKeywordIdeas,
 	// Campaigns
 	pauseCampaign,
@@ -106,6 +108,7 @@ export {
 	removeNegativeKeywordFromCampaign,
 	removeSitelinkLinks,
 	search,
+	suggestGeoTargets,
 	updateAdGroupStatus,
 	updateAdStatus,
 	updateCalloutLinkStatus,

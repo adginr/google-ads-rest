@@ -135,6 +135,29 @@ export class GoogleAdsClient {
 	}
 
 	/**
+	 * Geo target constants matching location names (GeoTargetConstantService.SuggestGeoTargetConstants),
+	 * e.g. for a location picker. Partial names work ("Mün" suggests Munich). `locale` translates the
+	 * returned names; `countryCode` (ISO-3166-1 alpha-2) restricts results to one country.
+	 */
+	async suggestGeoTargetConstants(
+		names: string[],
+		{ locale = 'en', countryCode }: { locale?: string; countryCode?: string } = {}
+	): Promise<services.GeoTargetConstantSuggestion[]> {
+		if (!names.length)
+			throw new GoogleAdsError('suggestGeoTargetConstants needs at least one name.');
+		const body = await this.#request<services.SuggestGeoTargetConstantsResponse>(
+			'POST',
+			'/geoTargetConstants:suggest',
+			{
+				locale,
+				countryCode,
+				locationNames: { names }
+			} satisfies services.SuggestGeoTargetConstantsRequest
+		);
+		return body.geoTargetConstantSuggestions ?? [];
+	}
+
+	/**
 	 * Queries GAQL field metadata (GoogleAdsFieldService), e.g.
 	 * `SELECT name, selectable, filterable, sortable WHERE name LIKE 'campaign.%'`.
 	 */
