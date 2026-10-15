@@ -1,0 +1,63 @@
+{
+	"name": "@adginr/google-ads-rest",
+	"version": "0.0.0",
+	"description": "Typed Google Ads API client over REST (no gRPC, no developer token) plus ready-made agent tools.",
+	"keywords": [
+		"google-ads",
+		"google-ads-api",
+		"gaql",
+		"rest",
+		"typescript",
+		"ai-agent",
+		"llm-tools"
+	],
+	"homepage": "https://github.com/adginr/google-ads-rest/tree/main/packages/rest#readme",
+	"bugs": "https://github.com/adginr/google-ads-rest/issues",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/adginr/google-ads-rest.git",
+		"directory": "packages/rest"
+	},
+	"license": "Apache-2.0",
+	"author": "Kolin (https://adginr.com)",
+	"type": "module",
+	"sideEffects": false,
+	"engines": {
+		"node": ">=22"
+	},
+	"exports": {
+		".": "./src/index.ts",
+		"./tools": "./src/tools/index.ts",
+		"./package.json": "./package.json"
+	},
+	"files": [
+		"dist",
+		"LICENSE",
+		"NOTICE"
+	],
+	"scripts": {
+		"build": "tsdown",
+		"codegen": "node scripts/codegen.ts",
+		"typecheck": "tsc --noEmit",
+		"check:package": "publint --strict",
+		"prepack": "cp ../../LICENSE ../../NOTICE ."
+	},
+	"dependencies": {
+		"zod": "^4.6.7"
+	},
+	"publishConfig": {
+		"access": "public",
+		"provenance": true,
+		"exports": {
+			".": {
+				"types": "./dist/index.d.ts",
+				"default": "./dist/index.js"
+			},
+			"./tools": {
+				"types": "./dist/tools/index.d.ts",
+				"default": "./dist/tools/index.js"
+			},
+			"./package.json": "./package.json"
+		}
+	}
+}
