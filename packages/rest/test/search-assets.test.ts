@@ -10,6 +10,7 @@ import {
 	listSitelinks,
 	removeCalloutLinks,
 	search,
+	suggestGeoTargets,
 	updateSitelinkLinkStatus
 } from '../src/tools/index.ts';
 import { fakeApi } from './fake-api.ts';
@@ -136,9 +137,11 @@ describe('generate_keyword_ideas', () => {
 			geoTargetConstants: ['geoTargetConstants/2784'],
 			language: 'languageConstants/1000'
 		});
+		expect(api.requests[0]!.body).not.toHaveProperty('historicalMetricsOptions');
 		expect(ideas[0]).toEqual({
 			keyword: 'car lease',
 			avgMonthlySearches: 1300,
+			monthlySearches: [],
 			competition: 'HIGH',
 			competitionIndex: null,
 			lowTopOfPageBid: 1.2,
@@ -146,11 +149,140 @@ describe('generate_keyword_ideas', () => {
 		});
 	});
 
+	it('sends a month range and returns searches per month, oldest first', async () => {
+		const api = fakeApi({
+			other: () => [
+				200,
+				{
+					results: [
+						{
+							text: 'car lease',
+							keywordIdeaMetrics: {
+								monthlySearchVolumes: [
+									{ month: 'SEPTEMBER', year: '2026', monthlySearches: '60500' },
+									{ month: 'AUGUST', year: '2025', monthlySearches: '49500' },
+									{ month: 'JANUARY', year: '2026' },
+									{ month: 'DECEMBER', year: '2025', monthlySearches: '40500' }
+								]
+							}
+						}
+					]
+				}
+			]
+		});
+		const { ideas } = await api.call(generateKeywordIdeas, {
+			customerId,
+			keywords: ['car lease'],
+			fromMonth: '2025-08',
+			toMonth: '2026-09'
+		});
+		expect(api.requests[0]!.body).toMatchObject({
+			historicalMetricsOptions: {
+				yearMonthRange: {
+					start: { year: '2025', month: 'AUGUST' },
+					end: { year: '2026', month: 'SEPTEMBER' }
+				}
+			}
+		});
+		expect(ideas[0]!.monthlySearches).toEqual([
+			{ year: 2025, month: 8, searches: 49500 },
+			{ year: 2025, month: 12, searches: 40500 },
+			{ year: 2026, month: 1, searches: 0 },
+			{ year: 2026, month: 9, searches: 60500 }
+		]);
+	});
+
+	it.each([
+		[{ keywords: Array.from({ length: 21 }, (_, i) => `kw ${i}`) }, 'at most 20 seed keywords'],
+		[{ locationIds: Array.from({ length: 11 }, (_, i) => 2000 + i) }, 'at most 10 locations'],
+		[{ fromMonth: '2025-08' }, 'fromMonth and toMonth together'],
+		[{ fromMonth: '2026-09', toMonth: '2025-08' }, 'must not be after'],
+		[{ fromMonth: '2025-13', toMonth: '2026-01' }, 'YYYY-MM'],
+		[{ fromMonth: '2025-8', toMonth: '2026-01' }, 'YYYY-MM']
+	])('rejects %j before any request', async (override, message) => {
+		const api = fakeApi();
+		await expect(
+			api.call(generateKeywordIdeas, { customerId, keywords: ['car lease'], ...override })
+		).rejects.toThrow(message);
+		expect(api.requests).toHaveLength(0);
+	});
+
 	it('needs keywords or a page', async () => {
 		const api = fakeApi();
 		await expect(api.call(generateKeywordIdeas, { customerId })).rejects.toThrow(
 			'keywords, pageUrl, or both'
 		);
+	});
+});
+
+describe('suggest_geo_targets', () => {
+	it('sends names with locale and country and flattens suggestions', async () => {
+		const api = fakeApi({
+			other: () => [
+				200,
+				{
+					geoTargetConstantSuggestions: [
+						{
+							locale: 'de',
+							reach: '4500000',
+							searchTerm: 'Mün',
+							geoTargetConstant: {
+								resourceName: 'geoTargetConstants/1004234',
+								id: '1004234',
+								name: 'München',
+								countryCode: 'DE',
+								targetType: 'City',
+								status: 'ENABLED',
+								canonicalName: 'Munich,Bavaria,Germany'
+							}
+						},
+						{ searchTerm: 'Mün' }
+					]
+				}
+			]
+		});
+		const { suggestions } = await api.call(suggestGeoTargets, {
+			names: [' Mün '],
+			locale: 'de',
+			countryCode: 'de'
+		});
+		expect(api.requests[0]!.method).toBe('POST');
+		expect(api.requests[0]!.path).toBe('/geoTargetConstants:suggest');
+		expect(api.requests[0]!.body).toEqual({
+			locale: 'de',
+			countryCode: 'DE',
+			locationNames: { names: ['Mün'] }
+		});
+		expect(suggestions).toEqual([
+			{
+				id: 1004234,
+				name: 'München',
+				canonicalName: 'Munich,Bavaria,Germany',
+				countryCode: 'DE',
+				targetType: 'City',
+				status: 'ENABLED',
+				reach: 4500000,
+				searchTerm: 'Mün'
+			}
+		]);
+	});
+
+	it('defaults to English without a country', async () => {
+		const api = fakeApi({ other: () => [200, {}] });
+		const { suggestions } = await api.call(suggestGeoTargets, { names: ['Dubai'] });
+		expect(api.requests[0]!.body).toEqual({ locale: 'en', locationNames: { names: ['Dubai'] } });
+		expect(suggestions).toEqual([]);
+	});
+
+	it.each([
+		[{ names: [] }, ''],
+		[{ names: ['  '] }, 'cannot be empty'],
+		[{ names: ['Munich'], countryCode: 'DEU' }, 'two-letter'],
+		[{ names: ['Munich'], locale: 'German!' }, 'language code']
+	])('rejects %j before any request', async (input, message) => {
+		const api = fakeApi();
+		await expect(api.call(suggestGeoTargets, input)).rejects.toThrow(message);
+		expect(api.requests).toHaveLength(0);
 	});
 });
 
@@ -307,6 +439,6 @@ describe('registry', () => {
 		for (const tool of adsTools.filter((t) => !t.annotations.readOnly)) {
 			expect(Object.keys(tool.input.shape), tool.name).toContain('validateOnly');
 		}
-		expect(adsTools).toHaveLength(30);
+		expect(adsTools).toHaveLength(31);
 	});
 });

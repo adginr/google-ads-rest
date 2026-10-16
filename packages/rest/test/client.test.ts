@@ -42,6 +42,12 @@ describe('GoogleAdsClient', () => {
 		await expect(ads.listAccessibleCustomers()).rejects.toThrow('google-ads-mcp auth');
 	});
 
+	it('refuses to suggest geo targets without names', async () => {
+		const api = fakeApi();
+		await expect(api.ads.suggestGeoTargetConstants([])).rejects.toThrow('at least one name');
+		expect(api.requests).toHaveLength(0);
+	});
+
 	it('sends login-customer-id without dashes', async () => {
 		const api = fakeApi({ loginCustomerId: '799-303-7647' });
 		await api.ads.search('1234567890', 'SELECT campaign.id FROM campaign');

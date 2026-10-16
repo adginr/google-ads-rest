@@ -36,6 +36,14 @@ exports[`google-ads-mcp over stdio > lists every tool with its required inputs a
   },
   {
     "destructive": false,
+    "name": "suggest_geo_targets",
+    "readOnly": true,
+    "required": [
+      "names",
+    ],
+  },
+  {
+    "destructive": false,
     "name": "generate_keyword_ideas",
     "readOnly": true,
     "required": [

@@ -94,7 +94,8 @@ front of it before exposing it anywhere.
 | `list_campaigns`                                       | Campaigns with status, budget and performance over a date range.       |
 | `get_resource_metadata`                                | Selectable / filterable / sortable fields of a GAQL resource.          |
 | `search`                                               | Structured GAQL query (fields, resource, conditions, ordering, limit). |
-| `generate_keyword_ideas`                               | Keyword Planner ideas with volumes, competition and bid ranges.        |
+| `suggest_geo_targets`                                  | Location IDs from (partial) place names.                               |
+| `generate_keyword_ideas`                               | Keyword Planner ideas with monthly volumes, competition, bid ranges.   |
 | `pause_campaign`, `enable_campaign`                    | Change campaign status.                                                |
 | `update_campaign_budget`                               | Change the daily budget; refuses shared budgets unless confirmed.      |
 | `create_ad_group`                                      | New ad group, paused by default.                                       |

@@ -5,7 +5,7 @@ Typed Google Ads API client for Node.js over REST, plus ready-made tools for AI 
 - `fetch` and OAuth only: no gRPC, no protobuf runtime, no developer token.
 - Types for all of Google Ads API v26, generated from Google's REST discovery document.
 - One atomic `mutate()` for every resource type, GAQL `search()` with pagination, readable errors.
-- 30 agent tools with zod schemas, usable from MCP, TanStack AI, the Vercel AI SDK or plain code.
+- 31 agent tools with zod schemas, usable from MCP, TanStack AI, the Vercel AI SDK or plain code.
 
 ```bash
 npm install @adginr/google-ads-rest
@@ -60,6 +60,7 @@ await ads.mutate('1234567890', operations, { validateOnly: true });
 
 await ads.listAccessibleCustomers(); // ['customers/1234567890', …]
 await ads.generateKeywordIdeas('1234567890', { keywordSeed: { keywords: ['car lease'] } });
+await ads.suggestGeoTargetConstants(['Mün'], { locale: 'de', countryCode: 'DE' });
 await ads.searchFields("SELECT name, selectable WHERE name LIKE 'campaign.%'");
 ```
 
