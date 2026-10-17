@@ -18,6 +18,15 @@ exports[`google-ads-mcp over stdio > lists every tool with its required inputs a
   },
   {
     "destructive": false,
+    "name": "get_campaign_snapshot",
+    "readOnly": true,
+    "required": [
+      "customerId",
+      "campaignId",
+    ],
+  },
+  {
+    "destructive": false,
     "name": "get_resource_metadata",
     "readOnly": true,
     "required": [

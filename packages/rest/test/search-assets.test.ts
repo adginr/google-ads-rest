@@ -461,6 +461,6 @@ describe('registry', () => {
 		for (const tool of adsTools.filter((t) => !t.annotations.readOnly)) {
 			expect(Object.keys(tool.input.shape), tool.name).toContain('validateOnly');
 		}
-		expect(adsTools).toHaveLength(42);
+		expect(adsTools).toHaveLength(43);
 	});
 });

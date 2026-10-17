@@ -22,6 +22,7 @@ import {
 	updateCampaign,
 	updateCampaignBudget
 } from './campaigns.ts';
+import { getCampaignSnapshot } from './campaign-snapshot.ts';
 import type { AdsTool } from './define-tool.ts';
 import { suggestGeoTargets } from './geo-targets.ts';
 import { generateKeywordIdeas } from './keyword-planner.ts';
@@ -59,6 +60,7 @@ export const adsTools = [
 	// Discover
 	listAccessibleCustomers,
 	listCampaigns,
+	getCampaignSnapshot,
 	getResourceMetadata,
 	search,
 	suggestGeoTargets,
@@ -130,6 +132,7 @@ export {
 	detachNegativeKeywordList,
 	enableCampaign,
 	generateKeywordIdeas,
+	getCampaignSnapshot,
 	getResourceMetadata,
 	listAccessibleCustomers,
 	listAdsInAdGroup,

@@ -92,6 +92,7 @@ front of it before exposing it anywhere.
 | ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
 | `list_accessible_customers`                            | Account IDs the signed-in user can access.                                                               |
 | `list_campaigns`                                       | Campaigns with status, budget and performance over a date range.                                         |
+| `get_campaign_snapshot`                                | One campaign in full: settings, budget, targeting, ad groups, keywords, ads, negatives and assets.       |
 | `get_resource_metadata`                                | Selectable / filterable / sortable fields of a GAQL resource.                                            |
 | `search`                                               | Structured GAQL query (fields, resource, conditions, ordering, limit).                                   |
 | `suggest_geo_targets`                                  | Location IDs from (partial) place names.                                                                 |

@@ -6,7 +6,7 @@ Typed Google Ads API client for Node.js over REST, plus ready-made tools for AI 
 - Types for all of Google Ads API v26, generated from Google's REST discovery document.
 - One atomic `mutate()` for every resource type, GAQL `search()` with pagination, readable errors.
 - `MutatePlan` to publish a whole campaign in one atomic request, or as a background batch job.
-- 42 agent tools with zod schemas, usable from MCP, TanStack AI, the Vercel AI SDK or plain code.
+- 43 agent tools with zod schemas, usable from MCP, TanStack AI, the Vercel AI SDK or plain code.
 
 ```bash
 npm install @adginr/google-ads-rest

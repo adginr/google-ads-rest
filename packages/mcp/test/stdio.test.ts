@@ -80,7 +80,7 @@ describe('google-ads-mcp over stdio', () => {
 	it('exposes only read-only tools with --read-only', { timeout: 15_000 }, async () => {
 		const [tools] = await rpc(['--read-only'], [{ method: 'tools/list' }]);
 		const listed = tools!.result!.tools as ListedTool[];
-		expect(listed.length).toBe(10);
+		expect(listed.length).toBe(11);
 		expect(listed.every((tool) => tool.annotations.readOnlyHint)).toBe(true);
 	});
 
