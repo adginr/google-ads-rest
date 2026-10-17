@@ -1,4 +1,4 @@
-import type { errors } from './types/index.ts';
+import type { errors, google } from './types/index.ts';
 
 /** One entry of a GoogleAdsFailure, e.g. `{ code: 'queryError.UNRECOGNIZED_FIELD', message: '…' }`. */
 export interface GoogleAdsErrorEntry {
@@ -45,33 +45,45 @@ export class GoogleAdsError extends Error {
 	 */
 	static fromResponse(httpStatus: number, body: unknown): GoogleAdsError {
 		const error = (body as { error?: RestError } | undefined)?.error;
-		const failure = error?.details?.find((detail) =>
-			detail['@type']?.endsWith('.GoogleAdsFailure')
-		) as (errors.GoogleAdsFailure & { '@type': string }) | undefined;
-
-		const entries = (failure?.errors ?? []).map((entry): GoogleAdsErrorEntry => ({
-			code: Object.entries(entry.errorCode ?? {})
-				.map(([kind, value]) => `${kind}.${value}`)
-				.join(', '),
-			message: entry.message ?? '',
-			field: entry.location?.fieldPathElements
-				?.map((el) => (el.index === undefined ? el.fieldName : `${el.fieldName}[${el.index}]`))
-				.join('.'),
-			trigger: entry.trigger && Object.values(entry.trigger)[0]
-		}));
-
-		const summary = entries.length
-			? entries
-					.map((e) => `${e.code}: ${e.message}${e.field ? ` (field: ${e.field})` : ''}`)
-					.join('; ')
-			: (error?.message ?? 'Unknown error');
+		const { summary, entries, requestId } = describe(error);
 		const status = error?.status ? ` ${error.status}` : '';
 		return new GoogleAdsError(`Google Ads API ${httpStatus}${status}: ${summary}`, {
 			status: httpStatus,
 			errors: entries,
-			requestId: failure?.requestId
+			requestId
 		});
 	}
+
+	/** Builds an error from a google.rpc.Status outside an HTTP error, e.g. one failed batch job operation. */
+	static fromStatus(status: google.Rpc_Status): GoogleAdsError {
+		const { summary, entries, requestId } = describe(status as RestError);
+		return new GoogleAdsError(summary, { errors: entries, requestId });
+	}
+}
+
+/** Google's specific errors from a google.rpc.Status, and a one-line summary of them. */
+function describe(error: RestError | undefined) {
+	const failure = error?.details?.find((detail) =>
+		detail['@type']?.endsWith('.GoogleAdsFailure')
+	) as (errors.GoogleAdsFailure & { '@type': string }) | undefined;
+
+	const entries = (failure?.errors ?? []).map((entry): GoogleAdsErrorEntry => ({
+		code: Object.entries(entry.errorCode ?? {})
+			.map(([kind, value]) => `${kind}.${value}`)
+			.join(', '),
+		message: entry.message ?? '',
+		field: entry.location?.fieldPathElements
+			?.map((el) => (el.index === undefined ? el.fieldName : `${el.fieldName}[${el.index}]`))
+			.join('.'),
+		trigger: entry.trigger && Object.values(entry.trigger)[0]
+	}));
+
+	const summary = entries.length
+		? entries
+				.map((e) => `${e.code}: ${e.message}${e.field ? ` (field: ${e.field})` : ''}`)
+				.join('; ')
+		: (error?.message ?? 'Unknown error');
+	return { summary, entries, requestId: failure?.requestId };
 }
 
 /** REST error envelope: google.rpc.Status plus the HTTP status name. */

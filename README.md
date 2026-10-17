@@ -10,8 +10,8 @@ Google Ads API for Node.js and AI agents, over plain REST.
 - **No gRPC, no protobuf runtime, no developer token.** `fetch` plus OAuth; works anywhere Node 22+ runs.
 - **Typed from Google's own discovery document.** Every resource, enum and request of API v26, exactly as it
   goes over the wire (camelCase, int64 as strings). One command regenerates it for the next API version.
-- **Agent tools with guard rails.** 31 tools for GAQL reporting, keywords, ads, budgets, callouts and
-  sitelinks. New things start paused, every change supports a dry run, removals are flagged as destructive.
+- **Agent tools with guard rails.** 43 tools for GAQL reporting, reading and building Search campaigns, keywords, negative
+  keyword lists, ads, budgets, callouts and sitelinks. New things start paused, every change supports a dry run, removals are flagged as destructive.
 - **An MCP server** that puts those tools into any Model Context Protocol client.
 
 | Package                                    | What it is                                                                         |

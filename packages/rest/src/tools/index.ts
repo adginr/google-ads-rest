@@ -4,7 +4,7 @@
  * MCP (`@adginr/google-ads-mcp`), TanStack AI, the Vercel AI SDK, or call `tool.run(input, { ads })` directly.
  */
 import { listAccessibleCustomers, listCampaigns } from './accounts.ts';
-import { createAdGroup, updateAdGroupStatus } from './ad-groups.ts';
+import { createAdGroup, updateAdGroup, updateAdGroupStatus } from './ad-groups.ts';
 import { createResponsiveSearchAd, listAdsInAdGroup, updateAdStatus } from './ads.ts';
 import {
 	attachCalloutsToAccount,
@@ -14,7 +14,15 @@ import {
 	removeCalloutLinks,
 	updateCalloutLinkStatus
 } from './callouts.ts';
-import { enableCampaign, pauseCampaign, updateCampaignBudget } from './campaigns.ts';
+import {
+	createCampaignBudget,
+	createSearchCampaign,
+	enableCampaign,
+	pauseCampaign,
+	updateCampaign,
+	updateCampaignBudget
+} from './campaigns.ts';
+import { getCampaignSnapshot } from './campaign-snapshot.ts';
 import type { AdsTool } from './define-tool.ts';
 import { suggestGeoTargets } from './geo-targets.ts';
 import { generateKeywordIdeas } from './keyword-planner.ts';
@@ -23,8 +31,17 @@ import {
 	addNegativeKeywordToAdGroup,
 	addNegativeKeywordToCampaign,
 	removeKeywordFromAdGroup,
-	removeNegativeKeywordFromCampaign
+	removeNegativeKeywordFromCampaign,
+	updateKeywordStatus
 } from './keywords.ts';
+import {
+	addKeywordsToNegativeKeywordList,
+	attachNegativeKeywordList,
+	createNegativeKeywordList,
+	detachNegativeKeywordList,
+	listNegativeKeywordLists,
+	removeKeywordsFromNegativeKeywordList
+} from './negative-keyword-lists.ts';
 import { getResourceMetadata, search } from './search.ts';
 import {
 	attachSitelinksToAdGroup,
@@ -43,22 +60,35 @@ export const adsTools = [
 	// Discover
 	listAccessibleCustomers,
 	listCampaigns,
+	getCampaignSnapshot,
 	getResourceMetadata,
 	search,
 	suggestGeoTargets,
 	generateKeywordIdeas,
 	// Campaigns
+	createCampaignBudget,
+	createSearchCampaign,
+	updateCampaign,
 	pauseCampaign,
 	enableCampaign,
 	updateCampaignBudget,
 	// Ad groups and keywords
 	createAdGroup,
+	updateAdGroup,
 	updateAdGroupStatus,
 	addKeywordsToAdGroup,
+	updateKeywordStatus,
 	removeKeywordFromAdGroup,
 	addNegativeKeywordToAdGroup,
 	addNegativeKeywordToCampaign,
 	removeNegativeKeywordFromCampaign,
+	// Negative keyword lists
+	listNegativeKeywordLists,
+	createNegativeKeywordList,
+	addKeywordsToNegativeKeywordList,
+	removeKeywordsFromNegativeKeywordList,
+	attachNegativeKeywordList,
+	detachNegativeKeywordList,
 	// Ads
 	listAdsInAdGroup,
 	createResponsiveSearchAd,
@@ -84,34 +114,46 @@ export const readOnlyAdsTools = adsTools.filter((tool) => tool.annotations.readO
 
 export {
 	addKeywordsToAdGroup,
+	addKeywordsToNegativeKeywordList,
 	addNegativeKeywordToAdGroup,
 	addNegativeKeywordToCampaign,
 	attachCalloutsToAccount,
 	attachCalloutsToCampaign,
+	attachNegativeKeywordList,
 	attachSitelinksToAdGroup,
 	attachSitelinksToCampaign,
 	createAdGroup,
 	createCallouts,
+	createCampaignBudget,
+	createNegativeKeywordList,
 	createResponsiveSearchAd,
+	createSearchCampaign,
 	createSitelinks,
+	detachNegativeKeywordList,
 	enableCampaign,
 	generateKeywordIdeas,
+	getCampaignSnapshot,
 	getResourceMetadata,
 	listAccessibleCustomers,
 	listAdsInAdGroup,
 	listCallouts,
 	listCampaigns,
+	listNegativeKeywordLists,
 	listSitelinks,
 	pauseCampaign,
 	removeCalloutLinks,
 	removeKeywordFromAdGroup,
+	removeKeywordsFromNegativeKeywordList,
 	removeNegativeKeywordFromCampaign,
 	removeSitelinkLinks,
 	search,
 	suggestGeoTargets,
+	updateAdGroup,
 	updateAdGroupStatus,
 	updateAdStatus,
 	updateCalloutLinkStatus,
+	updateCampaign,
 	updateCampaignBudget,
+	updateKeywordStatus,
 	updateSitelinkLinkStatus
 };

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { gaqlString } from '../gaql.ts';
+import { keywordOperation } from '../operations.ts';
 import { idFromResourceName, resourceNames } from '../resource-names.ts';
-import type { services } from '../types/index.ts';
 import { defineTool } from './define-tool.ts';
 import {
 	charCount,
@@ -9,6 +9,7 @@ import {
 	entityId,
 	matchType,
 	money,
+	unique,
 	uniqueIgnoringCase,
 	upperEnum,
 	validateOnly
@@ -19,7 +20,7 @@ const MAX_KEYWORD_WORDS = 10;
 const MAX_KEYWORDS_PER_REQUEST = 500;
 
 /** Bare keyword text. Display syntax ([exact], "phrase", +modifier, -negative) would be stored literally. */
-const keywordText = z
+export const keywordText = z
 	.string()
 	.trim()
 	.min(1, 'keyword cannot be empty.')
@@ -121,16 +122,15 @@ export const addKeywordsToAdGroup = defineTool({
 		}
 
 		const pending = keywords.filter((text) => !existing.has(`${text.toLowerCase()}|${matchType}`));
-		const operations: services.MutateOperation[] = pending.map((text) => ({
-			adGroupCriterionOperation: {
-				create: {
-					adGroup: resourceNames.adGroup(customerId, adGroupId),
-					status,
-					keyword: { text, matchType },
-					...(cpcBid === undefined ? {} : { cpcBidMicros: String(cpcBid) })
-				}
-			}
-		}));
+		const operations = pending.map((text) =>
+			keywordOperation({
+				adGroup: resourceNames.adGroup(customerId, adGroupId),
+				text,
+				matchType,
+				status,
+				cpcBidMicros: cpcBid
+			})
+		);
 		// An empty mutate is an API error; nothing to send when every keyword already exists.
 		const results = operations.length
 			? await ads.mutate(customerId, operations, { validateOnly })
@@ -392,6 +392,61 @@ export const removeNegativeKeywordFromCampaign = defineTool({
 			campaignId,
 			keyword,
 			matchType,
+			validateOnly
+		};
+	}
+});
+
+export const updateKeywordStatus = defineTool({
+	name: 'update_keyword_status',
+	title: 'Update keyword status',
+	description:
+		'Pauses or enables positive keywords of one ad group by criterion ID, atomically (all or none). Paused ' +
+		'keywords keep their history and can be enabled again; to delete one use remove_keyword_from_ad_group. ' +
+		'Get criterion IDs with the search tool on ad_group_criterion.',
+	input: z.object({
+		customerId,
+		adGroupId,
+		criterionIds: z
+			.array(entityId('Criterion ID: the part after "~" in customers/1/adGroupCriteria/111~222.'))
+			.min(1)
+			.max(MAX_KEYWORDS_PER_REQUEST)
+			.superRefine(unique('criterion ID'))
+			.describe(`Keyword criterion IDs, at most ${MAX_KEYWORDS_PER_REQUEST} per call.`),
+		status: upperEnum(['ENABLED', 'PAUSED'] as const).describe(
+			'No default on purpose: enabling starts spend once the ad group and campaign are enabled.'
+		),
+		validateOnly
+	}),
+	output: z.object({
+		adGroupId: z.string(),
+		status: z.string(),
+		keywords: z
+			.array(z.string().nullable())
+			.describe('Resource names in input order; null for a dry run.'),
+		validateOnly: z.boolean()
+	}),
+	annotations: { readOnly: false, destructive: false, idempotent: true },
+	async run({ customerId, adGroupId, criterionIds, status, validateOnly }, { ads }) {
+		const results = await ads.mutate(
+			customerId,
+			criterionIds.map((criterionId) => ({
+				adGroupCriterionOperation: {
+					update: {
+						resourceName: resourceNames.adGroupCriterion(customerId, adGroupId, criterionId),
+						status
+					},
+					updateMask: 'status'
+				}
+			})),
+			{ validateOnly }
+		);
+		return {
+			adGroupId,
+			status,
+			keywords: criterionIds.map(
+				(_, i) => results[i]?.adGroupCriterionResult?.resourceName ?? null
+			),
 			validateOnly
 		};
 	}

@@ -8,5 +8,7 @@ export {
 export { GoogleAdsError, type GoogleAdsErrorEntry } from './errors.ts';
 export { GAQL_RESOURCES, type GaqlResource } from './gaql-resources.gen.ts';
 export * from './gaql.ts';
+export * from './mutate-plan.ts';
+export * from './operations.ts';
 export * from './resource-names.ts';
 export type * from './types/index.ts';

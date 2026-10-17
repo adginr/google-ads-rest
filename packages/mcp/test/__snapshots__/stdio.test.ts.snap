@@ -18,6 +18,15 @@ exports[`google-ads-mcp over stdio > lists every tool with its required inputs a
   },
   {
     "destructive": false,
+    "name": "get_campaign_snapshot",
+    "readOnly": true,
+    "required": [
+      "customerId",
+      "campaignId",
+    ],
+  },
+  {
+    "destructive": false,
     "name": "get_resource_metadata",
     "readOnly": true,
     "required": [
@@ -48,6 +57,37 @@ exports[`google-ads-mcp over stdio > lists every tool with its required inputs a
     "readOnly": true,
     "required": [
       "customerId",
+    ],
+  },
+  {
+    "destructive": false,
+    "name": "create_campaign_budget",
+    "readOnly": false,
+    "required": [
+      "customerId",
+      "name",
+      "dailyBudget",
+      "explicitlyShared",
+    ],
+  },
+  {
+    "destructive": false,
+    "name": "create_search_campaign",
+    "readOnly": false,
+    "required": [
+      "customerId",
+      "name",
+      "bidding",
+      "containsEuPoliticalAdvertising",
+    ],
+  },
+  {
+    "destructive": false,
+    "name": "update_campaign",
+    "readOnly": false,
+    "required": [
+      "customerId",
+      "campaignId",
     ],
   },
   {
@@ -89,6 +129,15 @@ exports[`google-ads-mcp over stdio > lists every tool with its required inputs a
     ],
   },
   {
+    "destructive": false,
+    "name": "update_ad_group",
+    "readOnly": false,
+    "required": [
+      "customerId",
+      "adGroupId",
+    ],
+  },
+  {
     "destructive": true,
     "name": "update_ad_group_status",
     "readOnly": false,
@@ -107,6 +156,17 @@ exports[`google-ads-mcp over stdio > lists every tool with its required inputs a
       "adGroupId",
       "keywords",
       "matchType",
+    ],
+  },
+  {
+    "destructive": false,
+    "name": "update_keyword_status",
+    "readOnly": false,
+    "required": [
+      "customerId",
+      "adGroupId",
+      "criterionIds",
+      "status",
     ],
   },
   {
@@ -146,6 +206,63 @@ exports[`google-ads-mcp over stdio > lists every tool with its required inputs a
       "customerId",
       "campaignId",
       "keyword",
+    ],
+  },
+  {
+    "destructive": false,
+    "name": "list_negative_keyword_lists",
+    "readOnly": true,
+    "required": [
+      "customerId",
+    ],
+  },
+  {
+    "destructive": false,
+    "name": "create_negative_keyword_list",
+    "readOnly": false,
+    "required": [
+      "customerId",
+      "name",
+    ],
+  },
+  {
+    "destructive": false,
+    "name": "add_keywords_to_negative_keyword_list",
+    "readOnly": false,
+    "required": [
+      "customerId",
+      "listId",
+      "keywords",
+    ],
+  },
+  {
+    "destructive": true,
+    "name": "remove_keywords_from_negative_keyword_list",
+    "readOnly": false,
+    "required": [
+      "customerId",
+      "listId",
+      "keywords",
+    ],
+  },
+  {
+    "destructive": false,
+    "name": "attach_negative_keyword_list",
+    "readOnly": false,
+    "required": [
+      "customerId",
+      "listId",
+      "campaignIds",
+    ],
+  },
+  {
+    "destructive": true,
+    "name": "detach_negative_keyword_list",
+    "readOnly": false,
+    "required": [
+      "customerId",
+      "listId",
+      "campaignIds",
     ],
   },
   {

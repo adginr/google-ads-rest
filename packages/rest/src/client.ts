@@ -135,6 +135,82 @@ export class GoogleAdsClient {
 	}
 
 	/**
+	 * Creates an empty batch job (BatchJobService) for operations too many for one atomic mutate. Add
+	 * operations with `addBatchJobOperations`, then start it with `runBatchJob`. `MutatePlan` wraps the
+	 * whole flow. Batch jobs are not atomic and have no dry run.
+	 */
+	async createBatchJob(customerId: string): Promise<string> {
+		const body = await this.#request<services.MutateBatchJobResponse>(
+			'POST',
+			`/customers/${customerId}/batchJobs:mutate`,
+			{ operation: { create: {} } } satisfies services.MutateBatchJobRequest
+		);
+		const resourceName = body.result?.resourceName;
+		if (!resourceName) throw new GoogleAdsError('Creating a batch job returned no resource name.');
+		return resourceName;
+	}
+
+	/**
+	 * Appends operations to a batch job that has not run yet. Pass the previous call's
+	 * `nextSequenceToken` as `sequenceToken` so Google rejects calls arriving out of order.
+	 */
+	async addBatchJobOperations(
+		batchJob: string,
+		operations: services.MutateOperation[],
+		sequenceToken?: string
+	): Promise<{ nextSequenceToken?: string; totalOperations: number }> {
+		const body = await this.#request<services.AddBatchJobOperationsResponse>(
+			'POST',
+			`/${batchJob}:addOperations`,
+			{
+				mutateOperations: operations,
+				sequenceToken
+			} satisfies services.AddBatchJobOperationsRequest
+		);
+		return {
+			nextSequenceToken: body.nextSequenceToken,
+			totalOperations: Number(body.totalOperations ?? 0)
+		};
+	}
+
+	/** Starts a batch job. Returns the long-running operation name; poll progress with `getBatchJob`. */
+	async runBatchJob(batchJob: string): Promise<string | undefined> {
+		const body = await this.#request<{ name?: string }>('POST', `/${batchJob}:run`, {});
+		return body.name;
+	}
+
+	/** A batch job's status (PENDING, RUNNING, DONE) and progress metadata. */
+	async getBatchJob(batchJob: string): Promise<resources.BatchJob | undefined> {
+		const customerId = /^customers\/(\d+)\/batchJobs\/\d+$/.exec(batchJob)?.[1];
+		if (!customerId) throw new GoogleAdsError(`Not a batch job resource name: '${batchJob}'.`);
+		const [row] = await this.search(
+			customerId,
+			`SELECT batch_job.resource_name, batch_job.status, batch_job.long_running_operation,
+				batch_job.metadata.operation_count, batch_job.metadata.executed_operation_count,
+				batch_job.metadata.estimated_completion_ratio, batch_job.metadata.creation_date_time,
+				batch_job.metadata.start_date_time, batch_job.metadata.completion_date_time
+			FROM batch_job WHERE batch_job.resource_name = '${batchJob}'`
+		);
+		return row?.batchJob;
+	}
+
+	/** Every result of a finished batch job, one per operation, following pagination. */
+	async listBatchJobResults(batchJob: string): Promise<services.BatchJobResult[]> {
+		const results: services.BatchJobResult[] = [];
+		let pageToken: string | undefined;
+		do {
+			const query = new URLSearchParams({ pageSize: '1000', ...(pageToken ? { pageToken } : {}) });
+			const body = await this.#request<services.ListBatchJobResultsResponse>(
+				'GET',
+				`/${batchJob}:listResults?${query}`
+			);
+			results.push(...(body.results ?? []));
+			pageToken = body.nextPageToken;
+		} while (pageToken);
+		return results;
+	}
+
+	/**
 	 * Geo target constants matching location names (GeoTargetConstantService.SuggestGeoTargetConstants),
 	 * e.g. for a location picker. Partial names work ("Mün" suggests Munich). `locale` translates the
 	 * returned names; `countryCode` (ISO-3166-1 alpha-2) restricts results to one country.

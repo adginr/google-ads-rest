@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { adGroupOperation } from '../operations.ts';
 import { idFromResourceName, resourceNames } from '../resource-names.ts';
 import { defineTool } from './define-tool.ts';
 import { customerId, entityId, money, text, upperEnum, validateOnly } from './schemas.ts';
@@ -42,17 +43,13 @@ export const createAdGroup = defineTool({
 		const [result] = await ads.mutate(
 			customerId,
 			[
-				{
-					adGroupOperation: {
-						create: {
-							name,
-							campaign: resourceNames.campaign(customerId, campaignId),
-							status,
-							type,
-							...(cpcBid === undefined ? {} : { cpcBidMicros: String(cpcBid) })
-						}
-					}
-				}
+				adGroupOperation({
+					name,
+					campaign: resourceNames.campaign(customerId, campaignId),
+					status,
+					type,
+					cpcBidMicros: cpcBid
+				})
 			],
 			{ validateOnly }
 		);
@@ -110,6 +107,61 @@ export const updateAdGroupStatus = defineTool({
 			adGroup: result?.adGroupResult?.resourceName ?? null,
 			adGroupId,
 			status,
+			validateOnly
+		};
+	}
+});
+
+export const updateAdGroup = defineTool({
+	name: 'update_ad_group',
+	title: 'Update ad group',
+	description:
+		'Renames an ad group and/or changes its default max CPC bid. Only the given fields change. The bid ' +
+		'matters for MANUAL_CPC campaigns (keywords without their own bid use it); automated bidding ignores ' +
+		'it. For status use update_ad_group_status.',
+	input: z
+		.object({
+			customerId,
+			adGroupId: entityId('Ad group ID, digits only.'),
+			name: text(255, 'New ad group name, unique within the campaign.').optional(),
+			cpcBid: money('New default max CPC bid.').optional(),
+			validateOnly
+		})
+		.refine((input) => input.name !== undefined || input.cpcBid !== undefined, {
+			message: 'Give name, cpcBid, or both.'
+		}),
+	output: z.object({
+		adGroup: z.string().nullable().describe('Resource name; null for a dry run.'),
+		adGroupId: z.string(),
+		updated: z.array(z.string()).describe('Fields changed.'),
+		validateOnly: z.boolean()
+	}),
+	annotations: { readOnly: false, destructive: false, idempotent: true },
+	async run({ customerId, adGroupId, name, cpcBid, validateOnly }, { ads }) {
+		const updated = [
+			...(name !== undefined ? ['name'] : []),
+			...(cpcBid !== undefined ? ['cpcBidMicros'] : [])
+		];
+		const [result] = await ads.mutate(
+			customerId,
+			[
+				{
+					adGroupOperation: {
+						update: {
+							resourceName: resourceNames.adGroup(customerId, adGroupId),
+							...(name !== undefined ? { name } : {}),
+							...(cpcBid !== undefined ? { cpcBidMicros: String(cpcBid) } : {})
+						},
+						updateMask: updated.join(',')
+					}
+				}
+			],
+			{ validateOnly }
+		);
+		return {
+			adGroup: result?.adGroupResult?.resourceName ?? null,
+			adGroupId,
+			updated: updated.map((field) => (field === 'cpcBidMicros' ? 'cpcBid' : field)),
 			validateOnly
 		};
 	}

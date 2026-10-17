@@ -5,7 +5,8 @@ Typed Google Ads API client for Node.js over REST, plus ready-made tools for AI 
 - `fetch` and OAuth only: no gRPC, no protobuf runtime, no developer token.
 - Types for all of Google Ads API v26, generated from Google's REST discovery document.
 - One atomic `mutate()` for every resource type, GAQL `search()` with pagination, readable errors.
-- 31 agent tools with zod schemas, usable from MCP, TanStack AI, the Vercel AI SDK or plain code.
+- `MutatePlan` to publish a whole campaign in one atomic request, or as a background batch job.
+- 43 agent tools with zod schemas, usable from MCP, TanStack AI, the Vercel AI SDK or plain code.
 
 ```bash
 npm install @adginr/google-ads-rest
@@ -66,6 +67,67 @@ await ads.searchFields("SELECT name, selectable WHERE name LIKE 'campaign.%'");
 
 REST returns int64 values (IDs, metrics, `*Micros`) as strings and omits fields that hold their default
 value (`0`, `false`, `''`). Money is in micros: divide by 1 000 000.
+
+### Publishing a whole campaign
+
+`MutatePlan` sends related entities together. Entities refer to each other through temporary resource names
+(negative IDs) that Google resolves within the request, and the results come back under your own keys. The
+operation builders (`searchCampaignOperation`, `adGroupOperation`, `keywordOperation`,
+`responsiveSearchAdOperation`, `negativeKeywordListOperation`, …) start everything that can spend PAUSED.
+
+```ts
+import {
+  MutatePlan,
+  adGroupOperation,
+  campaignBudgetOperation,
+  campaignTargetingOperations,
+  keywordOperation,
+  searchCampaignOperation
+} from '@adginr/google-ads-rest';
+
+const plan = new MutatePlan('1234567890');
+const budget = plan.tempResourceName('campaignBudgets');
+plan.add(
+  campaignBudgetOperation({
+    resourceName: budget,
+    name: 'Sofas budget',
+    amountMicros: 50e6,
+    explicitlyShared: false
+  }),
+  'budget'
+);
+const campaign = plan.tempResourceName('campaigns');
+plan.add(
+  searchCampaignOperation({
+    resourceName: campaign,
+    name: 'Sofas',
+    budget,
+    bidding: { strategy: 'MAXIMIZE_CLICKS' },
+    containsEuPoliticalAdvertising: false
+  }),
+  'campaign'
+);
+for (const op of campaignTargetingOperations(campaign, {
+  locationIds: [2784],
+  languageIds: [1000]
+}))
+  plan.add(op);
+const adGroup = plan.tempResourceName('adGroups');
+plan.add(adGroupOperation({ resourceName: adGroup, campaign, name: 'Outdoor sofas' }), 'adGroup');
+plan.add(
+  keywordOperation({ adGroup, text: 'outdoor sofa', matchType: 'PHRASE' }),
+  'kw:outdoor sofa'
+);
+
+await plan.publish(ads, { validateOnly: true }); // Google checks every operation, nothing changes
+const { resourceNames } = await plan.publish(ads); // { budget: 'customers/…/campaignBudgets/…', … }
+```
+
+`publish` is atomic (all or nothing) and takes up to 10 000 operations. Larger plans go through a batch job:
+`plan.publishInBackground(ads, { onProgress })` uploads in chunks, polls progress and returns the resource names
+plus per-operation `failures`. Batch jobs are not atomic and have no dry run, so dry-run smaller plans (for
+example one per campaign) first. To survive a restart, call `plan.submitBatchJob(ads)`, store the job name and
+`plan.keys`, and later call `waitForBatchJob` and `collectBatchJobResults`.
 
 ### Errors
 
