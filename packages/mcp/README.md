@@ -88,32 +88,32 @@ front of it before exposing it anywhere.
 
 ## Tools
 
-| Tool                                                   | What it does                                                           |
-| ------------------------------------------------------ | ---------------------------------------------------------------------- |
-| `list_accessible_customers`                            | Account IDs the signed-in user can access.                             |
-| `list_campaigns`                                       | Campaigns with status, budget and performance over a date range.       |
-| `get_resource_metadata`                                | Selectable / filterable / sortable fields of a GAQL resource.          |
-| `search`                                               | Structured GAQL query (fields, resource, conditions, ordering, limit). |
-| `suggest_geo_targets`                                  | Location IDs from (partial) place names.                               |
-| `generate_keyword_ideas`                               | Keyword Planner ideas with monthly volumes, competition, bid ranges.   |
-| `pause_campaign`, `enable_campaign`                    | Change campaign status.                                                |
-| `update_campaign_budget`                               | Change the daily budget; refuses shared budgets unless confirmed.      |
-| `create_ad_group`                                      | New ad group, paused by default.                                       |
-| `update_ad_group_status`                               | Enable, pause or remove an ad group.                                   |
-| `add_keywords_to_ad_group`                             | Add keywords in one match type, optionally skipping existing ones.     |
-| `remove_keyword_from_ad_group`                         | Remove one positive keyword (verified first; never touches negatives). |
-| `add_negative_keyword_to_ad_group`                     | Add an ad group negative keyword.                                      |
-| `add_negative_keyword_to_campaign`                     | Add a campaign negative keyword.                                       |
-| `remove_negative_keyword_from_campaign`                | Remove a campaign negative keyword.                                    |
-| `list_ads_in_ad_group`                                 | Ads with full responsive search ad copy, pins and Ad Strength.         |
-| `create_responsive_search_ad`                          | New RSA, paused by default, with pin checks and warnings.              |
-| `update_ad_status`                                     | Enable, pause or remove an ad.                                         |
-| `list_callouts`, `create_callouts`                     | Read callout links; create callout assets.                             |
-| `attach_callouts_to_campaign` / `_account`             | Link callouts.                                                         |
-| `update_callout_link_status`, `remove_callout_links`   | Pause, enable or unlink callouts.                                      |
-| `list_sitelinks`, `create_sitelinks`                   | Read sitelink links; create sitelink assets.                           |
-| `attach_sitelinks_to_campaign` / `_ad_group`           | Link sitelinks.                                                        |
-| `update_sitelink_link_status`, `remove_sitelink_links` | Pause, enable or unlink sitelinks.                                     |
+| Tool                                                   | What it does                                                                                             |
+| ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
+| `list_accessible_customers`                            | Account IDs the signed-in user can access.                                                               |
+| `list_campaigns`                                       | Campaigns with status, budget and performance over a date range.                                         |
+| `get_resource_metadata`                                | Selectable / filterable / sortable fields of a GAQL resource.                                            |
+| `search`                                               | Structured GAQL query (fields, resource, conditions, ordering, limit).                                   |
+| `suggest_geo_targets`                                  | Location IDs from (partial) place names.                                                                 |
+| `generate_keyword_ideas`                               | Keyword Planner ideas from keywords, a page or a whole site, with monthly volumes, competition and bids. |
+| `pause_campaign`, `enable_campaign`                    | Change campaign status.                                                                                  |
+| `update_campaign_budget`                               | Change the daily budget; refuses shared budgets unless confirmed.                                        |
+| `create_ad_group`                                      | New ad group, paused by default.                                                                         |
+| `update_ad_group_status`                               | Enable, pause or remove an ad group.                                                                     |
+| `add_keywords_to_ad_group`                             | Add keywords in one match type, optionally skipping existing ones.                                       |
+| `remove_keyword_from_ad_group`                         | Remove one positive keyword (verified first; never touches negatives).                                   |
+| `add_negative_keyword_to_ad_group`                     | Add an ad group negative keyword.                                                                        |
+| `add_negative_keyword_to_campaign`                     | Add a campaign negative keyword.                                                                         |
+| `remove_negative_keyword_from_campaign`                | Remove a campaign negative keyword.                                                                      |
+| `list_ads_in_ad_group`                                 | Ads with full responsive search ad copy, pins and Ad Strength.                                           |
+| `create_responsive_search_ad`                          | New RSA, paused by default, with pin checks and warnings.                                                |
+| `update_ad_status`                                     | Enable, pause or remove an ad.                                                                           |
+| `list_callouts`, `create_callouts`                     | Read callout links; create callout assets.                                                               |
+| `attach_callouts_to_campaign` / `_account`             | Link callouts.                                                                                           |
+| `update_callout_link_status`, `remove_callout_links`   | Pause, enable or unlink callouts.                                                                        |
+| `list_sitelinks`, `create_sitelinks`                   | Read sitelink links; create sitelink assets.                                                             |
+| `attach_sitelinks_to_campaign` / `_ad_group`           | Link sitelinks.                                                                                          |
+| `update_sitelink_link_status`, `remove_sitelink_links` | Pause, enable or unlink sitelinks.                                                                       |
 
 Every mutating tool takes `validateOnly: true` for a dry run. Money inputs (`dailyBudget`, `cpcBid`) are in the
 account currency, not micros.

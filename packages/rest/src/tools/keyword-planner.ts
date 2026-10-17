@@ -38,7 +38,8 @@ export const generateKeywordIdeas = defineTool({
 	title: 'Generate keyword ideas',
 	description:
 		'Keyword Planner: generates keyword ideas with average monthly searches, searches per month, ' +
-		'competition and top-of-page bid ranges, from seed keywords, a page URL, or both. Use it to research ' +
+		'competition and top-of-page bid ranges, from seed keywords, a page URL, or both; with wholeSite, ' +
+		"from every page of pageUrl's site instead of that one page. Use it to research " +
 		'new keywords or estimate demand before adding keywords. Searches per month cover the last 12 months ' +
 		'unless fromMonth/toMonth set a range; ask for 13 or more months (e.g. 2025-08 to 2026-09) to compare a ' +
 		'month with the same month a year earlier. Limits per request: 20 seed keywords and 10 locations; ' +
@@ -55,7 +56,14 @@ export const generateKeywordIdeas = defineTool({
 			pageUrl: z
 				.url({ protocol: /^https?$/ })
 				.optional()
-				.describe('A page (or whole site) to extract ideas from.'),
+				.describe('A page to extract ideas from, or with wholeSite, any URL on the site.'),
+			wholeSite: z
+				.boolean()
+				.default(false)
+				.describe(
+					"Use the whole site of pageUrl (its host, path dropped) instead of just that page. Google's " +
+						'site seed takes no seed keywords, so leave keywords empty.'
+				),
 			locationIds: z
 				.array(z.number().int().positive())
 				.max(10, 'Google accepts at most 10 locations per request.')
@@ -90,6 +98,14 @@ export const generateKeywordIdeas = defineTool({
 		.refine((input) => input.keywords?.length || input.pageUrl, {
 			message: 'Provide keywords, pageUrl, or both.'
 		})
+		.refine((input) => !input.wholeSite || input.pageUrl, {
+			message: 'wholeSite needs pageUrl: the site to generate ideas from.'
+		})
+		.refine((input) => !input.wholeSite || !input.keywords?.length, {
+			message:
+				'wholeSite cannot be combined with keywords: Google generates whole-site ideas from the site ' +
+				'alone. Drop keywords, or set wholeSite to false to combine keywords with that one page.'
+		})
 		.refine((input) => (input.fromMonth === undefined) === (input.toMonth === undefined), {
 			message: 'Set fromMonth and toMonth together.'
 		})
@@ -121,11 +137,13 @@ export const generateKeywordIdeas = defineTool({
 	async run(input, { ads }) {
 		const { keywords, pageUrl } = input;
 		const seed: Partial<services.GenerateKeywordIdeasRequest> =
-			keywords?.length && pageUrl
-				? { keywordAndUrlSeed: { keywords, url: pageUrl } }
-				: keywords?.length
-					? { keywordSeed: { keywords } }
-					: { urlSeed: { url: pageUrl } };
+			input.wholeSite && pageUrl
+				? { siteSeed: { site: new URL(pageUrl).hostname } }
+				: keywords?.length && pageUrl
+					? { keywordAndUrlSeed: { keywords, url: pageUrl } }
+					: keywords?.length
+						? { keywordSeed: { keywords } }
+						: { urlSeed: { url: pageUrl } };
 
 		const results = await ads.generateKeywordIdeas(
 			input.customerId,
