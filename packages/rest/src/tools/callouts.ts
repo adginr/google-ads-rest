@@ -18,6 +18,7 @@ import { defineTool } from './define-tool.ts';
 import {
 	customerId,
 	entityId,
+	isoDate,
 	optionalText,
 	text,
 	unique,
@@ -30,14 +31,6 @@ const CALLOUT_CHARS = 25;
 const level = upperEnum(['ACCOUNT', 'CAMPAIGN'] as const).describe(
 	'ACCOUNT: links that apply to every campaign. CAMPAIGN: links on specific campaigns.'
 );
-
-const isoDate = z
-	.string()
-	.regex(/^\d{4}-\d{2}-\d{2}$/, 'must be YYYY-MM-DD.')
-	.refine((value) => {
-		const date = new Date(`${value}T00:00:00Z`);
-		return !Number.isNaN(date.getTime()) && date.toISOString().startsWith(value);
-	}, 'must be a real calendar date.');
 
 const linkNames = z.array(z.string().trim().min(1)).min(1).superRefine(unique('resource name'));
 

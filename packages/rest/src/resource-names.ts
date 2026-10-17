@@ -15,6 +15,14 @@ export const resourceNames = {
 		`customers/${customerId}/adGroupAds/${adGroupId}~${adId}`,
 	adGroupCriterion: (customerId: string, adGroupId: string, criterionId: string) =>
 		`customers/${customerId}/adGroupCriteria/${adGroupId}~${criterionId}`,
+	campaignCriterion: (customerId: string, campaignId: string, criterionId: string) =>
+		`customers/${customerId}/campaignCriteria/${campaignId}~${criterionId}`,
+	sharedSet: (customerId: string, sharedSetId: string) =>
+		`customers/${customerId}/sharedSets/${sharedSetId}`,
+	sharedCriterion: (customerId: string, sharedSetId: string, criterionId: string) =>
+		`customers/${customerId}/sharedCriteria/${sharedSetId}~${criterionId}`,
+	campaignSharedSet: (customerId: string, campaignId: string, sharedSetId: string) =>
+		`customers/${customerId}/campaignSharedSets/${campaignId}~${sharedSetId}`,
 	asset: (customerId: string, assetId: string) => `customers/${customerId}/assets/${assetId}`,
 	geoTargetConstant: (id: number | string) => `geoTargetConstants/${id}`,
 	languageConstant: (id: number | string) => `languageConstants/${id}`

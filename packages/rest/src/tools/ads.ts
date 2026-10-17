@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { responsiveSearchAdOperation } from '../operations.ts';
 import { idFromResourceName, resourceNames } from '../resource-names.ts';
 import type { common } from '../types/index.ts';
 import { defineTool } from './define-tool.ts';
@@ -178,33 +179,27 @@ export const createResponsiveSearchAd = defineTool({
 		const { customerId, adGroupId, status, validateOnly } = input;
 		const headlinePins = input.headlinePins ?? input.headlines.map(() => null);
 		const descriptionPins = input.descriptionPins ?? input.descriptions.map(() => null);
-		const assets = (texts: string[], assigned: Array<string | null>): common.AdTextAsset[] =>
-			texts.map((text, i) =>
-				assigned[i]
-					? { text, pinnedField: assigned[i] as common.AdTextAsset['pinnedField'] }
-					: { text }
-			);
+		const pinned = <P extends string>(texts: string[], assigned: Array<string | null>) =>
+			texts.map((text, i) => ({ text, pinnedField: (assigned[i] ?? undefined) as P | undefined }));
 
 		const [result] = await ads.mutate(
 			customerId,
 			[
-				{
-					adGroupAdOperation: {
-						create: {
-							adGroup: resourceNames.adGroup(customerId, adGroupId),
-							status,
-							ad: {
-								finalUrls: input.finalUrls,
-								responsiveSearchAd: {
-									headlines: assets(input.headlines, headlinePins),
-									descriptions: assets(input.descriptions, descriptionPins),
-									...(input.path1 ? { path1: input.path1 } : {}),
-									...(input.path2 ? { path2: input.path2 } : {})
-								}
-							}
-						}
-					}
-				}
+				responsiveSearchAdOperation({
+					adGroup: resourceNames.adGroup(customerId, adGroupId),
+					status,
+					finalUrls: input.finalUrls,
+					headlines: pinned<'HEADLINE_1' | 'HEADLINE_2' | 'HEADLINE_3'>(
+						input.headlines,
+						headlinePins
+					),
+					descriptions: pinned<'DESCRIPTION_1' | 'DESCRIPTION_2'>(
+						input.descriptions,
+						descriptionPins
+					),
+					path1: input.path1,
+					path2: input.path2
+				})
 			],
 			{ validateOnly }
 		);

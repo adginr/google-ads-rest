@@ -96,15 +96,24 @@ front of it before exposing it anywhere.
 | `search`                                               | Structured GAQL query (fields, resource, conditions, ordering, limit).                                   |
 | `suggest_geo_targets`                                  | Location IDs from (partial) place names.                                                                 |
 | `generate_keyword_ideas`                               | Keyword Planner ideas from keywords, a page or a whole site, with monthly volumes, competition and bids. |
+| `create_campaign_budget`                               | New daily budget, shared or for one campaign.                                                            |
+| `create_search_campaign`                               | Search campaign with budget, bidding, networks, dates, locations and languages in one step; paused.      |
+| `update_campaign`                                      | Rename a campaign or switch its bidding strategy.                                                        |
 | `pause_campaign`, `enable_campaign`                    | Change campaign status.                                                                                  |
 | `update_campaign_budget`                               | Change the daily budget; refuses shared budgets unless confirmed.                                        |
 | `create_ad_group`                                      | New ad group, paused by default.                                                                         |
+| `update_ad_group`                                      | Rename an ad group or change its default CPC bid.                                                        |
 | `update_ad_group_status`                               | Enable, pause or remove an ad group.                                                                     |
 | `add_keywords_to_ad_group`                             | Add keywords in one match type, optionally skipping existing ones.                                       |
+| `update_keyword_status`                                | Pause or enable keywords.                                                                                |
 | `remove_keyword_from_ad_group`                         | Remove one positive keyword (verified first; never touches negatives).                                   |
 | `add_negative_keyword_to_ad_group`                     | Add an ad group negative keyword.                                                                        |
 | `add_negative_keyword_to_campaign`                     | Add a campaign negative keyword.                                                                         |
 | `remove_negative_keyword_from_campaign`                | Remove a campaign negative keyword.                                                                      |
+| `list_negative_keyword_lists`                          | Shared negative keyword lists, optionally with their keywords.                                           |
+| `create_negative_keyword_list`                         | New shared list, optionally with keywords and campaigns.                                                 |
+| `add_keywords_to_negative_keyword_list`, `remove_…`    | Add or remove keywords of a shared list.                                                                 |
+| `attach_negative_keyword_list`, `detach_…`             | Apply a shared list to campaigns or stop applying it.                                                    |
 | `list_ads_in_ad_group`                                 | Ads with full responsive search ad copy, pins and Ad Strength.                                           |
 | `create_responsive_search_ad`                          | New RSA, paused by default, with pin checks and warnings.                                                |
 | `update_ad_status`                                     | Enable, pause or remove an ad.                                                                           |

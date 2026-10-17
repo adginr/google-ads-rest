@@ -88,6 +88,15 @@ export function money(description: string) {
 		.describe(`${description} In account currency units (e.g. 1.25), not micros.`);
 }
 
+/** A calendar date, `YYYY-MM-DD`. */
+export const isoDate = z
+	.string()
+	.regex(/^\d{4}-\d{2}-\d{2}$/, 'must be YYYY-MM-DD.')
+	.refine((value) => {
+		const date = new Date(`${value}T00:00:00Z`);
+		return !Number.isNaN(date.getTime()) && date.toISOString().startsWith(value);
+	}, 'must be a real calendar date.');
+
 export const validateOnly = z
 	.boolean()
 	.default(false)
