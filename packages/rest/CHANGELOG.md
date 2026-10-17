@@ -1,5 +1,11 @@
 # @adginr/google-ads-rest
 
+## 0.3.0
+
+### Minor Changes
+
+- [#11](https://github.com/adginr/google-ads-rest/pull/11) [`ba52417`](https://github.com/adginr/google-ads-rest/commit/ba5241745e97b708b7eee963f1d1dc8d28d51da9) Thanks [@adginr](https://github.com/adginr)! - `generate_keyword_ideas` takes `wholeSite: true` to generate ideas from every page of `pageUrl`'s site (Google's site seed, host only) instead of that one page. It cannot be combined with `keywords`; the default stays the single page.
+
 ## 0.2.0
 
 ### Minor Changes
