@@ -149,6 +149,22 @@ describe('generate_keyword_ideas', () => {
 		});
 	});
 
+	it('seeds from one page by default and from the whole site with wholeSite', async () => {
+		const api = fakeApi({ other: () => [200, {}] });
+		const pageUrl = 'https://www.example.com:8443/cars/lease?ref=ad';
+		await api.call(generateKeywordIdeas, { customerId, pageUrl });
+		await api.call(generateKeywordIdeas, { customerId, pageUrl, keywords: ['car lease'] });
+		await api.call(generateKeywordIdeas, { customerId, pageUrl, wholeSite: true });
+		const seeds = api.requests.map(({ body }) =>
+			Object.fromEntries(Object.entries(body!).filter(([key]) => key.endsWith('Seed')))
+		);
+		expect(seeds).toEqual([
+			{ urlSeed: { url: pageUrl } },
+			{ keywordAndUrlSeed: { keywords: ['car lease'], url: pageUrl } },
+			{ siteSeed: { site: 'www.example.com' } }
+		]);
+	});
+
 	it('sends a month range and returns searches per month, oldest first', async () => {
 		const api = fakeApi({
 			other: () => [
@@ -195,6 +211,12 @@ describe('generate_keyword_ideas', () => {
 	it.each([
 		[{ keywords: Array.from({ length: 21 }, (_, i) => `kw ${i}`) }, 'at most 20 seed keywords'],
 		[{ locationIds: Array.from({ length: 11 }, (_, i) => 2000 + i) }, 'at most 10 locations'],
+		[
+			{ pageUrl: 'https://example.com/', wholeSite: true },
+			'wholeSite cannot be combined with keywords'
+		],
+		[{ keywords: undefined, wholeSite: true }, 'wholeSite needs pageUrl'],
+		[{ keywords: undefined, pageUrl: 'https://example.com/', wholeSite: 'true' }, ''],
 		[{ fromMonth: '2025-08' }, 'fromMonth and toMonth together'],
 		[{ fromMonth: '2026-09', toMonth: '2025-08' }, 'must not be after'],
 		[{ fromMonth: '2025-13', toMonth: '2026-01' }, 'YYYY-MM'],
