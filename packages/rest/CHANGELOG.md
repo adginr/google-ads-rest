@@ -1,5 +1,13 @@
 # @adginr/google-ads-rest
 
+## 0.6.1
+
+### Patch Changes
+
+- [#29](https://github.com/adginr/google-ads-rest/pull/29) [`130f048`](https://github.com/adginr/google-ads-rest/commit/130f0484f1cbf82d00038cea1c892aa246c4dd84) Thanks [@adginr](https://github.com/adginr)! - `uploadClickConversions`: a partial failure without a GoogleAdsFailure detail (no details, or another
+  `@type`) now yields one `failures` entry without `index` (`rpc.<CODE>` and Google's message) instead of an
+  empty list that read as success.
+
 ## 0.6.0
 
 ### Minor Changes
