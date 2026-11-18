@@ -92,6 +92,48 @@ describe('uploadClickConversions', () => {
 		]);
 	});
 
+	it.each([
+		['no details', undefined],
+		[
+			'a detail of another type',
+			[{ '@type': 'type.googleapis.com/google.rpc.DebugInfo', detail: 'x' }]
+		]
+	])('never loses a partial failure that has %s', async (_, details) => {
+		const api = fakeApi({
+			other: () => [
+				200,
+				{
+					results: [{ gclid: 'a', conversionAction: action }, {}],
+					partialFailureError: {
+						code: 3,
+						message: 'Request contains an invalid argument.',
+						...(details ? { details } : {})
+					}
+				}
+			]
+		});
+		const result = await api.ads.uploadClickConversions('1234567890', [
+			conversion('a'),
+			conversion('bad')
+		]);
+
+		expect(result.failures).toEqual([
+			{ code: 'rpc.INVALID_ARGUMENT', message: 'Request contains an invalid argument.' }
+		]);
+		expect(result.failures[0]).not.toHaveProperty('index');
+		expect(result.results[0]?.gclid).toBe('a');
+		expect(result.results[1]).toBeNull();
+	});
+
+	it('keeps a fallback entry when the partial failure has no message either', async () => {
+		const api = fakeApi({ other: () => [200, { results: [{}], partialFailureError: {} }] });
+		const result = await api.ads.uploadClickConversions('1234567890', [conversion('a')]);
+		expect(result.failures).toEqual([
+			{ code: 'rpc.UNKNOWN', message: 'Google reported a partial failure without details.' }
+		]);
+		expect(result.results).toEqual([null]);
+	});
+
 	it('passes validateOnly through', async () => {
 		const api = fakeApi({ other: () => [200, {}] });
 		const result = await api.ads.uploadClickConversions('1234567890', [conversion('a')], {
