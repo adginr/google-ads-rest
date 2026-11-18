@@ -1,5 +1,13 @@
 # @adginr/google-ads-mcp
 
+## 0.4.1
+
+### Patch Changes
+
+- [#21](https://github.com/adginr/google-ads-rest/pull/21) [`ccd04fa`](https://github.com/adginr/google-ads-rest/commit/ccd04fa0f8b42e6885e2df7e3bfead7d0e61ff68) Thanks [@adginr](https://github.com/adginr)! - Update the MCP SDK (`@modelcontextprotocol/node` 2.1.2, `@modelcontextprotocol/server` 2.4.0) so the HTTP server runs on `@hono/node-server` 2.x and a patched `hono`, which closes the open hono security advisories.
+- Updated dependencies [[`ccd04fa`](https://github.com/adginr/google-ads-rest/commit/ccd04fa0f8b42e6885e2df7e3bfead7d0e61ff68)]:
+  - @adginr/google-ads-rest@0.5.0
+
 ## 0.4.0
 
 ### Minor Changes
