@@ -12,7 +12,7 @@
 		"typecheck": "pnpm -r typecheck",
 		"test": "vitest run",
 		"test:watch": "vitest",
-		"lint": "prettier --check . && eslint .",
+		"lint": "prettier --check . && oxlint --type-aware --deny-warnings",
 		"format": "prettier --write .",
 		"check:package": "pnpm -r check:package",
 		"changeset": "changeset",
@@ -21,16 +21,13 @@
 	"devDependencies": {
 		"@changesets/changelog-github": "^1.0.1",
 		"@changesets/cli": "^3.0.3",
-		"@eslint/js": "^10.0.1",
 		"@types/node": "^24",
-		"eslint": "^10.15.0",
-		"eslint-config-prettier": "^10.1.8",
-		"globals": "^17.14.0",
+		"oxlint": "^1.94.0",
+		"oxlint-tsgolint": "^7.0.2007",
 		"prettier": "^3.10.1",
 		"publint": "^0.3.25",
 		"tsdown": "^0.23.7",
-		"typescript": "~6.0.3",
-		"typescript-eslint": "^8.73.0",
+		"typescript": "~7.0.2",
 		"vitest": "^5.0.5"
 	}
 }

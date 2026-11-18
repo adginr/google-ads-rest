@@ -28,6 +28,8 @@ export function upperEnum<const T extends readonly [string, ...string[]]>(values
 }
 
 /** Number of Unicode code points, matching how Google Ads counts characters. */
+// Code points are the point here: Google Ads counts them, not graphemes.
+// oxlint-disable-next-line typescript/no-misused-spread
 export const charCount = (value: string) => [...value].length;
 
 /** Required trimmed text with a maximum length in characters. */
@@ -38,7 +40,7 @@ export function text(maxLength: number | undefined, description: string) {
 			? schema
 			: schema.refine((value) => charCount(value) <= maxLength, {
 					error: (issue) =>
-						`must be ${maxLength} characters or fewer: '${issue.input}' is ${charCount(String(issue.input))} characters.`
+						`must be ${maxLength} characters or fewer: '${String(issue.input)}' is ${charCount(String(issue.input))} characters.`
 				})
 	).describe(description);
 }
@@ -50,7 +52,7 @@ export function optionalText(maxLength: number | undefined, description: string)
 		.trim()
 		.refine((value) => maxLength === undefined || charCount(value) <= maxLength, {
 			error: (issue) =>
-				`must be ${maxLength} characters or fewer: '${issue.input}' is ${charCount(String(issue.input))} characters.`
+				`must be ${maxLength} characters or fewer: '${String(issue.input)}' is ${charCount(String(issue.input))} characters.`
 		})
 		.transform((value) => value || undefined)
 		.optional()

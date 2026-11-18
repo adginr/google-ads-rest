@@ -27,11 +27,15 @@ export interface FakeApiOptions {
 	loginCustomerId?: string;
 }
 
+/** The URL a `fetch` call was made with. */
+export const urlOf = (input: Parameters<typeof fetch>[0]) =>
+	input instanceof Request ? input.url : input.toString();
+
 export function fakeApi(options: FakeApiOptions = {}) {
 	const requests: RecordedRequest[] = [];
 
 	const fetchFn: typeof fetch = async (input, init) => {
-		const url = new URL(String(input));
+		const url = new URL(urlOf(input));
 		if (url.hostname === 'oauth2.googleapis.com') {
 			return Response.json({ access_token: 'test-token', expires_in: 3600 });
 		}
@@ -39,7 +43,7 @@ export function fakeApi(options: FakeApiOptions = {}) {
 			method: init?.method ?? 'GET',
 			path: url.pathname.replace(/^\/v\d+/, ''),
 			headers: Object.fromEntries(Object.entries((init?.headers ?? {}) as Record<string, string>)),
-			body: init?.body ? JSON.parse(String(init.body)) : undefined
+			body: init?.body ? JSON.parse(init.body as string) : undefined
 		};
 		requests.push(request);
 

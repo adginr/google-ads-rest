@@ -202,7 +202,7 @@ export class GoogleAdsClient {
 			const query = new URLSearchParams({ pageSize: '1000', ...(pageToken ? { pageToken } : {}) });
 			const body = await this.#request<services.ListBatchJobResultsResponse>(
 				'GET',
-				`/${batchJob}:listResults?${query}`
+				`/${batchJob}:listResults?${query.toString()}`
 			);
 			results.push(...(body.results ?? []));
 			pageToken = body.nextPageToken;

@@ -55,8 +55,8 @@ export async function runAuth({ envFile, clientFile }: AuthOptions): Promise<voi
 		code_challenge_method: 'S256'
 	}).toString();
 
-	console.log(`Opening Google sign-in. If no browser opens, visit:\n\n${authUrl}\n`);
-	openBrowser(authUrl.toString());
+	console.log(`Opening Google sign-in. If no browser opens, visit:\n\n${authUrl.href}\n`);
+	openBrowser(authUrl.href);
 
 	let code: string;
 	try {

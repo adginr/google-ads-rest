@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { GoogleAdsClient } from '../src/client.ts';
 import { GoogleAdsError } from '../src/errors.ts';
-import { fakeApi } from './fake-api.ts';
+import { fakeApi, urlOf } from './fake-api.ts';
 
 describe('GoogleAdsClient', () => {
 	it('reports missing configuration before any network call', async () => {
@@ -15,7 +15,7 @@ describe('GoogleAdsClient', () => {
 
 	it('refreshes the token once and reuses it', async () => {
 		const fetchFn = vi.fn<typeof fetch>(async (input) =>
-			String(input).includes('oauth2')
+			urlOf(input).includes('oauth2')
 				? Response.json({ access_token: 'tok', expires_in: 3600 })
 				: Response.json({ resourceNames: ['customers/1'] })
 		);
@@ -27,7 +27,7 @@ describe('GoogleAdsClient', () => {
 		});
 		await ads.listAccessibleCustomers();
 		await ads.listAccessibleCustomers();
-		expect(fetchFn.mock.calls.filter(([url]) => String(url).includes('oauth2'))).toHaveLength(1);
+		expect(fetchFn.mock.calls.filter(([url]) => urlOf(url).includes('oauth2'))).toHaveLength(1);
 		const headers = fetchFn.mock.calls[1]![1]!.headers as Record<string, string>;
 		expect(headers.authorization).toBe('Bearer tok');
 	});
@@ -61,7 +61,7 @@ describe('GoogleAdsClient', () => {
 			clientSecret: 'b',
 			refreshToken: 'c',
 			fetch: async (input) => {
-				if (String(input).includes('oauth2'))
+				if (urlOf(input).includes('oauth2'))
 					return Response.json({ access_token: 't', expires_in: 3600 });
 				page++;
 				return Response.json({
