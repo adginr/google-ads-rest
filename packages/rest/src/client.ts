@@ -10,7 +10,7 @@
  */
 import { GOOGLE_ADS_API_VERSION } from './api-version.ts';
 import { GoogleAdsError, type GoogleAdsErrorEntry } from './errors.ts';
-import type { resources, services } from './types/index.ts';
+import type { google, resources, services } from './types/index.ts';
 
 const API_BASE = `https://googleads.googleapis.com/${GOOGLE_ADS_API_VERSION}`;
 const TOKEN_URL = 'https://oauth2.googleapis.com/token';
@@ -51,8 +51,54 @@ export interface UploadClickConversionsResult {
 	jobId?: string;
 	/** One entry per conversion sent, in the same order: Google's result, or `null` when it failed. */
 	results: Array<services.ClickConversionResult | null>;
-	/** Conversions Google rejected; `index` is the position in the `conversions` you passed. */
+	/**
+	 * Conversions Google rejected; `index` is the position in the `conversions` you passed. An entry without
+	 * `index` could not be tied to one conversion (for example a partial failure with no GoogleAdsFailure
+	 * detail): treat every `null` result as failed for that reason. Empty only when nothing failed.
+	 */
 	failures: Array<GoogleAdsErrorEntry & { index?: number }>;
+}
+
+/** google.rpc.Code names by number. */
+const RPC_CODES = [
+	'OK',
+	'CANCELLED',
+	'UNKNOWN',
+	'INVALID_ARGUMENT',
+	'DEADLINE_EXCEEDED',
+	'NOT_FOUND',
+	'ALREADY_EXISTS',
+	'PERMISSION_DENIED',
+	'RESOURCE_EXHAUSTED',
+	'FAILED_PRECONDITION',
+	'ABORTED',
+	'OUT_OF_RANGE',
+	'UNIMPLEMENTED',
+	'INTERNAL',
+	'UNAVAILABLE',
+	'DATA_LOSS',
+	'UNAUTHENTICATED'
+];
+
+/**
+ * Failures from an UploadClickConversions partial failure status, with the index of each failed conversion.
+ * A status without a GoogleAdsFailure detail (no details, or another `@type`) has no per-conversion
+ * entries; it still yields one entry, without `index`, so a failure never comes back as an empty list.
+ */
+function conversionFailures(status: google.Rpc_Status): UploadClickConversionsResult['failures'] {
+	const entries = GoogleAdsError.fromStatus(status).errors.map((entry) => {
+		const index = /^conversions\[(\d+)\]/.exec(entry.field ?? '')?.[1];
+		return { ...entry, index: index === undefined ? undefined : Number(index) };
+	});
+	if (entries.length) return entries;
+	const code =
+		status.code === undefined ? 'UNKNOWN' : (RPC_CODES[status.code] ?? String(status.code));
+	return [
+		{
+			code: `rpc.${code}`,
+			message: status.message || 'Google reported a partial failure without details.'
+		}
+	];
 }
 
 export class GoogleAdsClient {
@@ -137,7 +183,8 @@ export class GoogleAdsClient {
 	/**
 	 * Imports offline click conversions (ConversionUploadService.UploadClickConversions), up to 2000 per call.
 	 * Always runs with partial failure: valid conversions are imported, rejected ones come back in `failures`
-	 * with their index, and the call itself throws only when the whole request fails.
+	 * with their index (or one entry without an index when Google gives no per-conversion detail), and the
+	 * call itself throws only when the whole request fails.
 	 *
 	 * Each conversion needs `conversionAction` (resource name), `conversionDateTime`
 	 * (`yyyy-mm-dd hh:mm:ss+hh:mm`) and a click identifier (`gclid`, `gbraid`, `wbraid`) or
@@ -184,12 +231,7 @@ export class GoogleAdsClient {
 			} satisfies services.UploadClickConversionsRequest
 		);
 
-		const failures = body.partialFailureError
-			? GoogleAdsError.fromStatus(body.partialFailureError).errors.map((entry) => {
-					const index = /^conversions\[(\d+)\]/.exec(entry.field ?? '')?.[1];
-					return { ...entry, index: index === undefined ? undefined : Number(index) };
-				})
-			: [];
+		const failures = body.partialFailureError ? conversionFailures(body.partialFailureError) : [];
 		const failed = new Set(failures.map((failure) => failure.index));
 		const results = conversions.map((_, index) => {
 			const result = body.results?.[index];
