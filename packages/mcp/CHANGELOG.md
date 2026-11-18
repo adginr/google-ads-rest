@@ -1,5 +1,12 @@
 # @adginr/google-ads-mcp
 
+## 0.4.2
+
+### Patch Changes
+
+- Updated dependencies [[`658286b`](https://github.com/adginr/google-ads-rest/commit/658286bf60144bdbe1503375bf67ad1c8367f2b2)]:
+  - @adginr/google-ads-rest@0.6.0
+
 ## 0.4.1
 
 ### Patch Changes
