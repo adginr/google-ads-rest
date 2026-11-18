@@ -3,7 +3,10 @@ export {
 	GoogleAdsClient,
 	type GoogleAdsConfig,
 	type GoogleAdsRow,
-	type MutateOptions
+	MAX_CLICK_CONVERSIONS_PER_REQUEST,
+	type MutateOptions,
+	type UploadClickConversionsOptions,
+	type UploadClickConversionsResult
 } from './client.ts';
 export { GoogleAdsError, type GoogleAdsErrorEntry } from './errors.ts';
 export { GAQL_RESOURCES, type GaqlResource } from './gaql-resources.gen.ts';

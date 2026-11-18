@@ -24,6 +24,8 @@ export const resourceNames = {
 	campaignSharedSet: (customerId: string, campaignId: string, sharedSetId: string) =>
 		`customers/${customerId}/campaignSharedSets/${campaignId}~${sharedSetId}`,
 	asset: (customerId: string, assetId: string) => `customers/${customerId}/assets/${assetId}`,
+	conversionAction: (customerId: string, conversionActionId: string) =>
+		`customers/${customerId}/conversionActions/${conversionActionId}`,
 	geoTargetConstant: (id: number | string) => `geoTargetConstants/${id}`,
 	languageConstant: (id: number | string) => `languageConstants/${id}`
 };
