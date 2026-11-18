@@ -1,5 +1,13 @@
 # @adginr/google-ads-rest
 
+## 0.6.0
+
+### Minor Changes
+
+- [#27](https://github.com/adginr/google-ads-rest/pull/27) [`658286b`](https://github.com/adginr/google-ads-rest/commit/658286bf60144bdbe1503375bf67ad1c8367f2b2) Thanks [@adginr](https://github.com/adginr)! - Add `GoogleAdsClient.uploadClickConversions()` for offline click conversions (ConversionUploadService), with
+  partial failure, per-conversion `failures` by index, input checks before any request, and
+  `resourceNames.conversionAction()`.
+
 ## 0.5.0
 
 ### Minor Changes
