@@ -1,5 +1,11 @@
 # @adginr/google-ads-rest
 
+## 0.5.0
+
+### Minor Changes
+
+- [#21](https://github.com/adginr/google-ads-rest/pull/21) [`ccd04fa`](https://github.com/adginr/google-ads-rest/commit/ccd04fa0f8b42e6885e2df7e3bfead7d0e61ff68) Thanks [@adginr](https://github.com/adginr)! - Regenerate the v26 types from the 2026-11-10 discovery revision: new error enums (for example `budgetNetworkSettingError`) and new resource fields.
+
 ## 0.4.0
 
 ### Minor Changes
