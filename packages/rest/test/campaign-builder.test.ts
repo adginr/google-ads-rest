@@ -571,7 +571,7 @@ describe('MutatePlan', () => {
 			onProgress: (p) => progress.push(p.completionRatio)
 		});
 		const added = api.requests.filter((r) => r.path.endsWith(':addOperations'));
-		expect(added.map((r) => (r.body?.mutateOperations as unknown[]).length)).toEqual([2, 1]);
+		expect(added.map((r) => (r.body!.mutateOperations as unknown[]).length)).toEqual([2, 1]);
 		expect(added.map((r) => r.body?.sequenceToken)).toEqual([undefined, 't']);
 		expect(api.requests.some((r) => r.path === '/customers/1234567890/batchJobs/700:run')).toBe(
 			true

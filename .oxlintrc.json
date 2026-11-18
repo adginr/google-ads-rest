@@ -1,0 +1,28 @@
+{
+	"$schema": "./node_modules/oxlint/configuration_schema.json",
+	"plugins": ["typescript", "unicorn", "oxc", "import", "node", "vitest"],
+	"categories": {
+		"correctness": "error"
+	},
+	"env": {
+		"node": true,
+		"es2024": true
+	},
+	"ignorePatterns": ["**/dist/**", "**/coverage/**", "**/*.gen.ts"],
+	"rules": {
+		"typescript/consistent-type-imports": "error",
+		"no-unused-vars": [
+			"error",
+			{
+				"argsIgnorePattern": "^_"
+			}
+		],
+		"vitest/valid-expect": [
+			"error",
+			{
+				"maxArgs": 2
+			}
+		],
+		"vitest/require-to-throw-message": "off"
+	}
+}

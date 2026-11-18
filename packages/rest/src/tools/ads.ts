@@ -38,7 +38,7 @@ function assetTexts(label: string, spec: { min: number; max: number; chars: numb
 				.refine((value) => !/[\n\r\t]/.test(value), `${label}s cannot contain line breaks or tabs.`)
 				.refine((value) => charCount(value) <= spec.chars, {
 					error: (issue) =>
-						`each ${label} must be ${spec.chars} characters or fewer: '${issue.input}' is ${charCount(String(issue.input))}.`
+						`each ${label} must be ${spec.chars} characters or fewer: '${String(issue.input)}' is ${charCount(String(issue.input))}.`
 				})
 		)
 		.min(spec.min)
