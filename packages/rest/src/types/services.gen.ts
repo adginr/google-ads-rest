@@ -290,6 +290,8 @@ export interface ApplyRecommendationOperation {
 	lowerTargetRoasPerformanceBidTooLow?: ApplyRecommendationOperation_LowerTargetRoasPerformanceBidTooLowParameters;
 	/** Parameters to use when applying move unused budget recommendation. */
 	moveUnusedBudget?: ApplyRecommendationOperation_MoveUnusedBudgetParameters;
+	/** Parameters to use when applying Optimize For New Customers recommendation. */
+	optimizeForNewCustomers?: ApplyRecommendationOperation_OptimizeForNewCustomersParameters;
 	/** Parameters to use when applying Raise Budget Performance Too Low recommendation. */
 	raiseBudgetPerformanceTooLow?: ApplyRecommendationOperation_RaiseBudgetPerformanceTooLowParameters;
 	/** Parameters to use when applying raise Target CPA recommendation. */
@@ -756,7 +758,7 @@ export interface CampaignBudgetOperation {
 	create?: resources.CampaignBudget;
 	/** Remove operation: A resource name for the removed budget is expected, in this format: `customers/{customer_id}/campaignBudgets/{budget_id}` */
 	remove?: string;
-	/** Update operation: The campaign budget is expected to have a valid resource name. */
+	/** Update operation: The campaign budget is expected to have a valid resource name, and `update_mask` must be populated with the fields to modify. */
 	update?: resources.CampaignBudget;
 	/** FieldMask that determines which resource fields are modified in an update. */
 	updateMask?: string;
@@ -902,6 +904,22 @@ export interface CategoryInfo {
 	categoryName?: string;
 	/** The full path of the Product & Service Category. */
 	categoryPath?: string;
+}
+
+/** Request message for LocalServicesEligibilityService.CheckLocalServicesEligibility. */
+export interface CheckLocalServicesEligibilityRequest {
+	/** Required. The Google Business Profile listing ID to check eligibility for. */
+	listingId?: string;
+}
+
+/** Response message for LocalServicesEligibilityService.CheckLocalServicesEligibility. */
+export interface CheckLocalServicesEligibilityResponse {
+	/** Overall eligibility status of the customer. */
+	eligible?: boolean;
+	/** List of eligible goals mapped to their categories. */
+	eligibleGoals?: Array<EligibleGoal>;
+	/** Detailed suggestion reasons for checking eligibility (e.g. */
+	suggestionReasons?: Array<SuggestionReason>;
 }
 
 /** A click conversion. */
@@ -1216,6 +1234,16 @@ export interface CustomerAssetSetOperation {
 	remove?: string;
 }
 
+/** A single operation (create, update) on a customer budget network setting. */
+export interface CustomerBudgetNetworkSettingOperation {
+	/** Create operation: No resource name is expected for the new setting. */
+	create?: resources.CustomerBudgetNetworkSetting;
+	/** Update operation: The customer budget network setting is expected to have a valid resource name. */
+	update?: resources.CustomerBudgetNetworkSetting;
+	/** FieldMask that determines which resource fields are modified in an update. */
+	updateMask?: string;
+}
+
 /** A single operation (create, update) on a CustomerClientLink. */
 export interface CustomerClientLinkOperation {
 	/** Create operation: No resource name is expected for the new link. */
@@ -1258,13 +1286,13 @@ export interface CustomerManagerLinkOperation {
 	updateMask?: string;
 }
 
-/** Metrics representing the customer’s Ad performance. */
+/** Metrics representing the customer's Ad performance. */
 export interface CustomerMetrics {
 	/** Metrics calculated by aggregating values of a single metric for the customer. */
 	aggregateMetrics?: AggregateMetrics;
 	/** Average rate metrics calculated by dividing one metric by another. */
 	averageRateMetrics?: RateMetrics;
-	/** Metrics representing the customer’s competitive standing among advertisers scoped by the analysis. */
+	/** Metrics representing the customer's competitive standing among advertisers scoped by the analysis. */
 	percentileMetrics?: PercentileMetrics;
 	/** Metrics calculated by dividing the metric of the customer by that of the selected benchmarks source. */
 	shareMetrics?: ShareMetrics;
@@ -1390,6 +1418,26 @@ export interface EffectiveFrequencyBreakdown {
 export interface EffectiveFrequencyLimit {
 	/** The highest effective frequency value to include in Forecast.effective_frequency_breakdowns. */
 	effectiveFrequencyBreakdownLimit?: number;
+}
+
+/** Eligible category information. */
+export interface EligibleCategory {
+	/** The list of available business callout IDs for this category. */
+	callouts?: Array<string>;
+	/** The unique identifier for the service category. */
+	categoryId?: string;
+	/** The localized display name of the category. */
+	displayName?: string;
+	/** The list of available job type IDs for this category. */
+	jobTypes?: Array<string>;
+}
+
+/** Eligible goal mapping details. */
+export interface EligibleGoal {
+	/** Eligible categories for this lead type. */
+	categories?: Array<EligibleCategory>;
+	/** Eligible lead type. */
+	leadType?: 'UNSPECIFIED' | 'UNKNOWN' | 'MESSAGE' | 'PHONE_CALL' | 'BOOKING' | 'COUPON';
 }
 
 /** A single enablement result of a campaign. */
@@ -1949,7 +1997,7 @@ export interface GenerateRecommendationsRequest {
 	/** Optional. Current campaign positive location ids. */
 	positiveLocationsIds?: Array<string>;
 	/** Required. List of eligible recommendation_types to generate. */
-	recommendationTypes?: Array<'UNSPECIFIED' | 'UNKNOWN' | 'CAMPAIGN_BUDGET' | 'KEYWORD' | 'TEXT_AD' | 'TARGET_CPA_OPT_IN' | 'MAXIMIZE_CONVERSIONS_OPT_IN' | 'ENHANCED_CPC_OPT_IN' | 'SEARCH_PARTNERS_OPT_IN' | 'MAXIMIZE_CLICKS_OPT_IN' | 'OPTIMIZE_AD_ROTATION' | 'KEYWORD_MATCH_TYPE' | 'MOVE_UNUSED_BUDGET' | 'FORECASTING_CAMPAIGN_BUDGET' | 'TARGET_ROAS_OPT_IN' | 'RESPONSIVE_SEARCH_AD' | 'MARGINAL_ROI_CAMPAIGN_BUDGET' | 'USE_BROAD_MATCH_KEYWORD' | 'RESPONSIVE_SEARCH_AD_ASSET' | 'UPGRADE_SMART_SHOPPING_CAMPAIGN_TO_PERFORMANCE_MAX' | 'RESPONSIVE_SEARCH_AD_IMPROVE_AD_STRENGTH' | 'DISPLAY_EXPANSION_OPT_IN' | 'UPGRADE_LOCAL_CAMPAIGN_TO_PERFORMANCE_MAX' | 'RAISE_TARGET_CPA_BID_TOO_LOW' | 'FORECASTING_SET_TARGET_ROAS' | 'CALLOUT_ASSET' | 'SITELINK_ASSET' | 'CALL_ASSET' | 'SHOPPING_ADD_AGE_GROUP' | 'SHOPPING_ADD_COLOR' | 'SHOPPING_ADD_GENDER' | 'SHOPPING_ADD_GTIN' | 'SHOPPING_ADD_MORE_IDENTIFIERS' | 'SHOPPING_ADD_SIZE' | 'SHOPPING_ADD_PRODUCTS_TO_CAMPAIGN' | 'SHOPPING_FIX_DISAPPROVED_PRODUCTS' | 'SHOPPING_TARGET_ALL_OFFERS' | 'SHOPPING_FIX_SUSPENDED_MERCHANT_CENTER_ACCOUNT' | 'SHOPPING_FIX_MERCHANT_CENTER_ACCOUNT_SUSPENSION_WARNING' | 'SHOPPING_MIGRATE_REGULAR_SHOPPING_CAMPAIGN_OFFERS_TO_PERFORMANCE_MAX' | 'DYNAMIC_IMAGE_EXTENSION_OPT_IN' | 'RAISE_TARGET_CPA' | 'LOWER_TARGET_ROAS' | 'PERFORMANCE_MAX_OPT_IN' | 'IMPROVE_PERFORMANCE_MAX_AD_STRENGTH' | 'MIGRATE_DYNAMIC_SEARCH_ADS_CAMPAIGN_TO_PERFORMANCE_MAX' | 'FORECASTING_SET_TARGET_CPA' | 'SET_TARGET_CPA' | 'SET_TARGET_ROAS' | 'MAXIMIZE_CONVERSION_VALUE_OPT_IN' | 'IMPROVE_GOOGLE_TAG_COVERAGE' | 'PERFORMANCE_MAX_FINAL_URL_OPT_IN' | 'REFRESH_CUSTOMER_MATCH_LIST' | 'CUSTOM_AUDIENCE_OPT_IN' | 'LEAD_FORM_ASSET' | 'IMPROVE_DEMAND_GEN_AD_STRENGTH' | 'CAMPAIGN_SPECIFIC_APP_GOAL' | 'RAISE_TARGET_CPA_PERFORMANCE_BID_TOO_LOW' | 'LOWER_TARGET_ROAS_PERFORMANCE_BID_TOO_LOW' | 'RAISE_BUDGET_PERFORMANCE_TOO_LOW'>;
+	recommendationTypes?: Array<'UNSPECIFIED' | 'UNKNOWN' | 'CAMPAIGN_BUDGET' | 'KEYWORD' | 'TEXT_AD' | 'TARGET_CPA_OPT_IN' | 'MAXIMIZE_CONVERSIONS_OPT_IN' | 'ENHANCED_CPC_OPT_IN' | 'SEARCH_PARTNERS_OPT_IN' | 'MAXIMIZE_CLICKS_OPT_IN' | 'OPTIMIZE_AD_ROTATION' | 'KEYWORD_MATCH_TYPE' | 'MOVE_UNUSED_BUDGET' | 'FORECASTING_CAMPAIGN_BUDGET' | 'TARGET_ROAS_OPT_IN' | 'RESPONSIVE_SEARCH_AD' | 'MARGINAL_ROI_CAMPAIGN_BUDGET' | 'USE_BROAD_MATCH_KEYWORD' | 'RESPONSIVE_SEARCH_AD_ASSET' | 'UPGRADE_SMART_SHOPPING_CAMPAIGN_TO_PERFORMANCE_MAX' | 'RESPONSIVE_SEARCH_AD_IMPROVE_AD_STRENGTH' | 'DISPLAY_EXPANSION_OPT_IN' | 'UPGRADE_LOCAL_CAMPAIGN_TO_PERFORMANCE_MAX' | 'RAISE_TARGET_CPA_BID_TOO_LOW' | 'FORECASTING_SET_TARGET_ROAS' | 'CALLOUT_ASSET' | 'SITELINK_ASSET' | 'CALL_ASSET' | 'SHOPPING_ADD_AGE_GROUP' | 'SHOPPING_ADD_COLOR' | 'SHOPPING_ADD_GENDER' | 'SHOPPING_ADD_GTIN' | 'SHOPPING_ADD_MORE_IDENTIFIERS' | 'SHOPPING_ADD_SIZE' | 'SHOPPING_ADD_PRODUCTS_TO_CAMPAIGN' | 'SHOPPING_FIX_DISAPPROVED_PRODUCTS' | 'SHOPPING_TARGET_ALL_OFFERS' | 'SHOPPING_FIX_SUSPENDED_MERCHANT_CENTER_ACCOUNT' | 'SHOPPING_FIX_MERCHANT_CENTER_ACCOUNT_SUSPENSION_WARNING' | 'SHOPPING_MIGRATE_REGULAR_SHOPPING_CAMPAIGN_OFFERS_TO_PERFORMANCE_MAX' | 'DYNAMIC_IMAGE_EXTENSION_OPT_IN' | 'RAISE_TARGET_CPA' | 'LOWER_TARGET_ROAS' | 'PERFORMANCE_MAX_OPT_IN' | 'IMPROVE_PERFORMANCE_MAX_AD_STRENGTH' | 'MIGRATE_DYNAMIC_SEARCH_ADS_CAMPAIGN_TO_PERFORMANCE_MAX' | 'FORECASTING_SET_TARGET_CPA' | 'SET_TARGET_CPA' | 'SET_TARGET_ROAS' | 'MAXIMIZE_CONVERSION_VALUE_OPT_IN' | 'IMPROVE_GOOGLE_TAG_COVERAGE' | 'PERFORMANCE_MAX_FINAL_URL_OPT_IN' | 'REFRESH_CUSTOMER_MATCH_LIST' | 'CUSTOM_AUDIENCE_OPT_IN' | 'LEAD_FORM_ASSET' | 'IMPROVE_DEMAND_GEN_AD_STRENGTH' | 'CAMPAIGN_SPECIFIC_APP_GOAL' | 'RAISE_TARGET_CPA_PERFORMANCE_BID_TOO_LOW' | 'LOWER_TARGET_ROAS_PERFORMANCE_BID_TOO_LOW' | 'RAISE_BUDGET_PERFORMANCE_TOO_LOW' | 'OPTIMIZE_FOR_NEW_CUSTOMERS'>;
 	/** Optional. Seed information for Keywords. */
 	seedInfo?: GenerateRecommendationsRequest_SeedInfo;
 	/** Optional. If true, the campaign is opted into serving ads on specified placements in the Google Display Network. */
@@ -2276,6 +2324,8 @@ export interface GoogleAdsRow {
 	customerAsset?: resources.CustomerAsset;
 	/** The customer asset set referenced in the query. */
 	customerAssetSet?: resources.CustomerAssetSet;
+	/** The customer budget network setting referenced in the query. */
+	customerBudgetNetworkSetting?: resources.CustomerBudgetNetworkSetting;
 	/** The CustomerClient referenced in the query. */
 	customerClient?: resources.CustomerClient;
 	/** The CustomerClientLink referenced in the query. */
@@ -4306,6 +4356,30 @@ export interface MutateCustomerAssetsResponse {
 	results?: Array<MutateCustomerAssetResult>;
 }
 
+/** Request message for CustomerBudgetNetworkSettingService.MutateCustomerBudgetNetworkSetting. */
+export interface MutateCustomerBudgetNetworkSettingRequest {
+	/** Required. The operation to perform on the customer budget network setting. */
+	operation?: CustomerBudgetNetworkSettingOperation;
+	/** The response content type setting. */
+	responseContentType?: 'UNSPECIFIED' | 'RESOURCE_NAME_ONLY' | 'MUTABLE_RESOURCE';
+	/** If true, the request is validated but not executed. */
+	validateOnly?: boolean;
+}
+
+/** Response message for customer budget network setting mutate. */
+export interface MutateCustomerBudgetNetworkSettingResponse {
+	/** All results for the mutate. */
+	result?: MutateCustomerBudgetNetworkSettingResult;
+}
+
+/** The result for the customer budget network setting mutate. */
+export interface MutateCustomerBudgetNetworkSettingResult {
+	/** The mutated customer budget network setting with only mutable fields after mutate. */
+	customerBudgetNetworkSetting?: resources.CustomerBudgetNetworkSetting;
+	/** Returned for successful operations. */
+	resourceName?: string;
+}
+
 /** Request message for CustomerClientLinkService.MutateCustomerClientLink. */
 export interface MutateCustomerClientLinkRequest {
 	/** Required. The operation to perform on the individual CustomerClientLink. */
@@ -4916,6 +4990,8 @@ export interface MutateOperation {
 	customConversionGoalOperation?: CustomConversionGoalOperation;
 	/** A customer asset mutate operation. */
 	customerAssetOperation?: CustomerAssetOperation;
+	/** A customer budget network setting mutate operation. */
+	customerBudgetNetworkSettingOperation?: CustomerBudgetNetworkSettingOperation;
 	/** A customer conversion goal mutate operation. */
 	customerConversionGoalOperation?: CustomerConversionGoalOperation;
 	/** A customer customizer mutate operation. */
@@ -5048,6 +5124,8 @@ export interface MutateOperationResponse {
 	customConversionGoalResult?: MutateCustomConversionGoalResult;
 	/** The result for the customer asset mutate. */
 	customerAssetResult?: MutateCustomerAssetResult;
+	/** The result for the customer budget network setting mutate. */
+	customerBudgetNetworkSettingResult?: MutateCustomerBudgetNetworkSettingResult;
 	/** The result for the customer conversion goal mutate. */
 	customerConversionGoalResult?: MutateCustomerConversionGoalResult;
 	/** The result for the customer customizer mutate. */
@@ -5294,7 +5372,7 @@ export interface OnTargetAudienceMetrics {
 	youtubeAudienceSize?: string;
 }
 
-/** Metrics representing the customer’s competitive standing among advertisers scoped by the analysis. */
+/** Metrics representing the customer's competitive standing among advertisers scoped by the analysis. */
 export interface PercentileMetrics {
 	/** The customer's clicks percentile tier. */
 	clicksPercentileTier?: 'UNSPECIFIED' | 'UNKNOWN' | 'DEVELOPING' | 'ENTRY_LEVEL' | 'EMERGING_PLAYER' | 'COMPETITOR' | 'STRONG_COMPETITOR' | 'MARKET_LEADER';
@@ -6010,6 +6088,14 @@ export interface SuggestGeoTargetConstantsResponse {
 	geoTargetConstantSuggestions?: Array<GeoTargetConstantSuggestion>;
 }
 
+/** Suggestion reason details. */
+export interface SuggestionReason {
+	/** Detailed long text description. */
+	longText?: string;
+	/** Short summary text explaining the reason. */
+	shortText?: string;
+}
+
 /** Request message for KeywordThemeConstantService.SuggestKeywordThemeConstants. */
 export interface SuggestKeywordThemeConstantsRequest {
 	/** Upper-case, two-letter country code as defined by ISO-3166. */
@@ -6252,7 +6338,7 @@ export interface UpdateYouTubeVideoUploadResponse {
 export interface UploadCallConversionsRequest {
 	/** Required. The conversions that are being uploaded. */
 	conversions?: Array<CallConversion>;
-	/** Required. If `true`, successful operations will be carried out and invalid operations will return errors. */
+	/** Required. Must be set to `true`. */
 	partialFailure?: boolean;
 	/** If true, the request is validated but not executed. */
 	validateOnly?: boolean;
@@ -6272,7 +6358,7 @@ export interface UploadClickConversionsRequest {
 	conversions?: Array<ClickConversion>;
 	/** Optional. Optional input to set job ID. */
 	jobId?: number;
-	/** Required. If `true`, successful operations will be carried out and invalid operations will return errors. */
+	/** Required. Must be set to `true`. */
 	partialFailure?: boolean;
 	/** If `true`, the request is validated but not executed. */
 	validateOnly?: boolean;
@@ -6552,6 +6638,14 @@ export interface ApplyRecommendationOperation_LowerTargetRoasPerformanceBidTooLo
 export interface ApplyRecommendationOperation_MoveUnusedBudgetParameters {
 	/** Budget amount to move from excess budget to constrained budget. int64, sent as a string. */
 	budgetMicrosToMove?: string;
+}
+
+/** Parameters to use when applying Optimize For New Customers recommendations. */
+export interface ApplyRecommendationOperation_OptimizeForNewCustomersParameters {
+	/** Optional. Incremental conversion value set at the account level for each new customer acquired. */
+	accountDefaultIncrementalConversionValue?: number;
+	/** Optional. Incremental conversion value set at the campaign level for each new customer acquired, overriding the account default value. */
+	campaignOverrideIncrementalConversionValue?: number;
 }
 
 /** Parameters to use when applying Raise Budget Performance Too Low recommendations. */

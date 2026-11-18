@@ -350,7 +350,7 @@ export interface AdGroupAdAssetAutomationSetting {
 	/** The opt-in/out status for the specified asset automation type. */
 	assetAutomationStatus?: 'UNSPECIFIED' | 'UNKNOWN' | 'OPTED_IN' | 'OPTED_OUT';
 	/** The asset automation type that this setting configures. */
-	assetAutomationType?: 'UNSPECIFIED' | 'UNKNOWN' | 'TEXT_ASSET_AUTOMATION' | 'GENERATE_VERTICAL_YOUTUBE_VIDEOS' | 'GENERATE_SHORTER_YOUTUBE_VIDEOS' | 'GENERATE_LANDING_PAGE_PREVIEW' | 'GENERATE_LANDING_PAGE_TEXT' | 'GENERATE_ENHANCED_YOUTUBE_VIDEOS' | 'GENERATE_IMAGE_ENHANCEMENT' | 'GENERATE_IMAGE_EXTRACTION' | 'GENERATE_DESIGN_VERSIONS_FOR_IMAGES' | 'FINAL_URL_EXPANSION_TEXT_ASSET_AUTOMATION' | 'GENERATE_VIDEOS_FROM_OTHER_ASSETS' | 'GENERATE_ANIMATED_IMAGES_FROM_OTHER_ASSETS' | 'AUTOMATED_VIDEO_CRAWL';
+	assetAutomationType?: 'UNSPECIFIED' | 'UNKNOWN' | 'TEXT_ASSET_AUTOMATION' | 'GENERATE_VERTICAL_YOUTUBE_VIDEOS' | 'GENERATE_SHORTER_YOUTUBE_VIDEOS' | 'GENERATE_LANDING_PAGE_PREVIEW' | 'GENERATE_LANDING_PAGE_TEXT' | 'GENERATE_ENHANCED_YOUTUBE_VIDEOS' | 'GENERATE_IMAGE_ENHANCEMENT' | 'GENERATE_IMAGE_EXTRACTION' | 'GENERATE_DESIGN_VERSIONS_FOR_IMAGES' | 'FINAL_URL_EXPANSION_TEXT_ASSET_AUTOMATION' | 'GENERATE_VIDEOS_FROM_OTHER_ASSETS' | 'GENERATE_ANIMATED_IMAGES_FROM_OTHER_ASSETS' | 'AUTOMATED_VIDEO_CRAWL' | 'OVERLAY_TEXT_ON_VIDEOS';
 }
 
 /** A view on the usage of ad group ad asset combination. */
@@ -1649,6 +1649,10 @@ export interface CampaignBudget {
 	alignedBiddingStrategyId?: string;
 	/** The average daily amount to be spent by the campaign. int64, sent as a string. */
 	amountMicros?: string;
+	/** Whether this budget is eligible for waterfall channel prioritization and budget caps, and if not, why. */
+	readonly budgetNetworkEligibility?: common.BudgetNetworkEligibility;
+	/** Waterfall channel priorities and budget caps for this budget, at most one entry per advertising channel type. */
+	budgetNetworkSettings?: common.BudgetNetworkSettings;
 	/** The delivery method that determines the rate at which the campaign budget is spent. */
 	deliveryMethod?: 'UNSPECIFIED' | 'UNKNOWN' | 'STANDARD' | 'ACCELERATED';
 	/** Specifies whether the budget is explicitly shared. */
@@ -2322,7 +2326,7 @@ export interface Customer {
 	/** Timestamp of migration from feed based image to asset base image in yyyy-MM-dd HH:mm:ss format. */
 	readonly imageAssetAutoMigrationDoneDateTime?: string;
 	/** Settings for Local Services customer. */
-	readonly localServicesSettings?: LocalServicesSettings;
+	localServicesSettings?: LocalServicesSettings;
 	/** True if feed based location has been migrated to asset based location. */
 	readonly locationAssetAutoMigrationDone?: boolean;
 	/** Timestamp of migration from feed based location to asset base location in yyyy-MM-dd HH:mm:ss format. */
@@ -2389,6 +2393,14 @@ export interface CustomerAssetSet {
 	resourceName?: string;
 	/** The status of the customer asset set asset. */
 	readonly status?: 'UNSPECIFIED' | 'UNKNOWN' | 'ENABLED' | 'REMOVED';
+}
+
+/** Account-level default waterfall priorities and budget caps. */
+export interface CustomerBudgetNetworkSetting {
+	/** Account default settings, at most one entry per advertising channel type. */
+	budgetNetworkSettings?: common.BudgetNetworkSettings;
+	/** Immutable. The resource name of the customer budget network setting. */
+	resourceName?: string;
 }
 
 /** A link between the given customer and a client customer. */
@@ -2817,6 +2829,14 @@ export interface ExperimentArm {
 	resourceName?: string;
 	/** Traffic split of the trial arm. int64, sent as a string. */
 	trafficSplit?: string;
+}
+
+/** Identifier for a merchant in an external partner's point-of-sale system. */
+export interface ExternalPartnerMerchantId {
+	/** Alphanumeric or string merchant identifier in the external partner's system. */
+	alphanumericId?: string;
+	/** Numeric merchant identifier in the external partner's system. int64, sent as a string. */
+	numericId?: string;
 }
 
 /** Details about the employee's medical Fellowship. */
@@ -3581,6 +3601,8 @@ export interface LocalServicesSettings {
 	readonly granularInsuranceStatuses?: Array<GranularInsuranceStatus>;
 	/** A read-only list of geo vertical level license statuses. */
 	readonly granularLicenseStatuses?: Array<GranularLicenseStatus>;
+	/** Settings for external redemption provider integration. */
+	redemptionProviderInfo?: RedemptionProviderInfo;
 }
 
 /** A local services verification resource. */
@@ -3794,7 +3816,7 @@ export interface OfflineConversionError {
 	/** Field error. */
 	readonly fieldError?: 'UNSPECIFIED' | 'UNKNOWN' | 'REQUIRED' | 'IMMUTABLE_FIELD' | 'INVALID_VALUE' | 'VALUE_MUST_BE_UNSET' | 'REQUIRED_NONEMPTY_LIST' | 'FIELD_CANNOT_BE_CLEARED' | 'BLOCKED_VALUE' | 'FIELD_CAN_ONLY_BE_CLEARED';
 	/** Mutate error. */
-	readonly mutateError?: 'UNSPECIFIED' | 'UNKNOWN' | 'RESOURCE_NOT_FOUND' | 'ID_EXISTS_IN_MULTIPLE_MUTATES' | 'INCONSISTENT_FIELD_VALUES' | 'MUTATE_NOT_ALLOWED' | 'RESOURCE_NOT_IN_GOOGLE_ADS' | 'RESOURCE_ALREADY_EXISTS' | 'RESOURCE_DOES_NOT_SUPPORT_VALIDATE_ONLY' | 'OPERATION_DOES_NOT_SUPPORT_PARTIAL_FAILURE' | 'RESOURCE_READ_ONLY' | 'EU_POLITICAL_ADVERTISING_DECLARATION_REQUIRED';
+	readonly mutateError?: 'UNSPECIFIED' | 'UNKNOWN' | 'RESOURCE_NOT_FOUND' | 'ID_EXISTS_IN_MULTIPLE_MUTATES' | 'INCONSISTENT_FIELD_VALUES' | 'MUTATE_NOT_ALLOWED' | 'RESOURCE_NOT_IN_GOOGLE_ADS' | 'RESOURCE_ALREADY_EXISTS' | 'RESOURCE_DOES_NOT_SUPPORT_VALIDATE_ONLY' | 'OPERATION_DOES_NOT_SUPPORT_PARTIAL_FAILURE' | 'RESOURCE_READ_ONLY' | 'EU_POLITICAL_ADVERTISING_DECLARATION_REQUIRED' | 'MULTI_PARTY_APPROVAL_UNSUPPORTED_RESOURCE_COMBINATION';
 	/** Not allowlisted error. */
 	readonly notAllowlistedError?: 'UNSPECIFIED' | 'UNKNOWN' | 'CUSTOMER_NOT_ALLOWLISTED_FOR_THIS_FEATURE';
 	/** String format error. */
@@ -4135,6 +4157,8 @@ export interface Recommendation {
 	readonly moveUnusedBudgetRecommendation?: Recommendation_MoveUnusedBudgetRecommendation;
 	/** The Optimize Ad Rotation recommendation. */
 	readonly optimizeAdRotationRecommendation?: Recommendation_OptimizeAdRotationRecommendation;
+	/** The optimize for new customers recommendation. */
+	readonly optimizeForNewCustomersRecommendation?: Recommendation_OptimizeForNewCustomersRecommendation;
 	/** Recommendation to turn on Final URL expansion for your Performance Max campaigns. */
 	readonly performanceMaxFinalUrlOptInRecommendation?: Recommendation_PerformanceMaxFinalUrlOptInRecommendation;
 	/** The Performance Max Opt In recommendation. */
@@ -4196,7 +4220,7 @@ export interface Recommendation {
 	/** Add expanded text ad recommendation. */
 	readonly textAdRecommendation?: Recommendation_TextAdRecommendation;
 	/** The type of recommendation. */
-	readonly type?: 'UNSPECIFIED' | 'UNKNOWN' | 'CAMPAIGN_BUDGET' | 'KEYWORD' | 'TEXT_AD' | 'TARGET_CPA_OPT_IN' | 'MAXIMIZE_CONVERSIONS_OPT_IN' | 'ENHANCED_CPC_OPT_IN' | 'SEARCH_PARTNERS_OPT_IN' | 'MAXIMIZE_CLICKS_OPT_IN' | 'OPTIMIZE_AD_ROTATION' | 'KEYWORD_MATCH_TYPE' | 'MOVE_UNUSED_BUDGET' | 'FORECASTING_CAMPAIGN_BUDGET' | 'TARGET_ROAS_OPT_IN' | 'RESPONSIVE_SEARCH_AD' | 'MARGINAL_ROI_CAMPAIGN_BUDGET' | 'USE_BROAD_MATCH_KEYWORD' | 'RESPONSIVE_SEARCH_AD_ASSET' | 'UPGRADE_SMART_SHOPPING_CAMPAIGN_TO_PERFORMANCE_MAX' | 'RESPONSIVE_SEARCH_AD_IMPROVE_AD_STRENGTH' | 'DISPLAY_EXPANSION_OPT_IN' | 'UPGRADE_LOCAL_CAMPAIGN_TO_PERFORMANCE_MAX' | 'RAISE_TARGET_CPA_BID_TOO_LOW' | 'FORECASTING_SET_TARGET_ROAS' | 'CALLOUT_ASSET' | 'SITELINK_ASSET' | 'CALL_ASSET' | 'SHOPPING_ADD_AGE_GROUP' | 'SHOPPING_ADD_COLOR' | 'SHOPPING_ADD_GENDER' | 'SHOPPING_ADD_GTIN' | 'SHOPPING_ADD_MORE_IDENTIFIERS' | 'SHOPPING_ADD_SIZE' | 'SHOPPING_ADD_PRODUCTS_TO_CAMPAIGN' | 'SHOPPING_FIX_DISAPPROVED_PRODUCTS' | 'SHOPPING_TARGET_ALL_OFFERS' | 'SHOPPING_FIX_SUSPENDED_MERCHANT_CENTER_ACCOUNT' | 'SHOPPING_FIX_MERCHANT_CENTER_ACCOUNT_SUSPENSION_WARNING' | 'SHOPPING_MIGRATE_REGULAR_SHOPPING_CAMPAIGN_OFFERS_TO_PERFORMANCE_MAX' | 'DYNAMIC_IMAGE_EXTENSION_OPT_IN' | 'RAISE_TARGET_CPA' | 'LOWER_TARGET_ROAS' | 'PERFORMANCE_MAX_OPT_IN' | 'IMPROVE_PERFORMANCE_MAX_AD_STRENGTH' | 'MIGRATE_DYNAMIC_SEARCH_ADS_CAMPAIGN_TO_PERFORMANCE_MAX' | 'FORECASTING_SET_TARGET_CPA' | 'SET_TARGET_CPA' | 'SET_TARGET_ROAS' | 'MAXIMIZE_CONVERSION_VALUE_OPT_IN' | 'IMPROVE_GOOGLE_TAG_COVERAGE' | 'PERFORMANCE_MAX_FINAL_URL_OPT_IN' | 'REFRESH_CUSTOMER_MATCH_LIST' | 'CUSTOM_AUDIENCE_OPT_IN' | 'LEAD_FORM_ASSET' | 'IMPROVE_DEMAND_GEN_AD_STRENGTH' | 'CAMPAIGN_SPECIFIC_APP_GOAL' | 'RAISE_TARGET_CPA_PERFORMANCE_BID_TOO_LOW' | 'LOWER_TARGET_ROAS_PERFORMANCE_BID_TOO_LOW' | 'RAISE_BUDGET_PERFORMANCE_TOO_LOW';
+	readonly type?: 'UNSPECIFIED' | 'UNKNOWN' | 'CAMPAIGN_BUDGET' | 'KEYWORD' | 'TEXT_AD' | 'TARGET_CPA_OPT_IN' | 'MAXIMIZE_CONVERSIONS_OPT_IN' | 'ENHANCED_CPC_OPT_IN' | 'SEARCH_PARTNERS_OPT_IN' | 'MAXIMIZE_CLICKS_OPT_IN' | 'OPTIMIZE_AD_ROTATION' | 'KEYWORD_MATCH_TYPE' | 'MOVE_UNUSED_BUDGET' | 'FORECASTING_CAMPAIGN_BUDGET' | 'TARGET_ROAS_OPT_IN' | 'RESPONSIVE_SEARCH_AD' | 'MARGINAL_ROI_CAMPAIGN_BUDGET' | 'USE_BROAD_MATCH_KEYWORD' | 'RESPONSIVE_SEARCH_AD_ASSET' | 'UPGRADE_SMART_SHOPPING_CAMPAIGN_TO_PERFORMANCE_MAX' | 'RESPONSIVE_SEARCH_AD_IMPROVE_AD_STRENGTH' | 'DISPLAY_EXPANSION_OPT_IN' | 'UPGRADE_LOCAL_CAMPAIGN_TO_PERFORMANCE_MAX' | 'RAISE_TARGET_CPA_BID_TOO_LOW' | 'FORECASTING_SET_TARGET_ROAS' | 'CALLOUT_ASSET' | 'SITELINK_ASSET' | 'CALL_ASSET' | 'SHOPPING_ADD_AGE_GROUP' | 'SHOPPING_ADD_COLOR' | 'SHOPPING_ADD_GENDER' | 'SHOPPING_ADD_GTIN' | 'SHOPPING_ADD_MORE_IDENTIFIERS' | 'SHOPPING_ADD_SIZE' | 'SHOPPING_ADD_PRODUCTS_TO_CAMPAIGN' | 'SHOPPING_FIX_DISAPPROVED_PRODUCTS' | 'SHOPPING_TARGET_ALL_OFFERS' | 'SHOPPING_FIX_SUSPENDED_MERCHANT_CENTER_ACCOUNT' | 'SHOPPING_FIX_MERCHANT_CENTER_ACCOUNT_SUSPENSION_WARNING' | 'SHOPPING_MIGRATE_REGULAR_SHOPPING_CAMPAIGN_OFFERS_TO_PERFORMANCE_MAX' | 'DYNAMIC_IMAGE_EXTENSION_OPT_IN' | 'RAISE_TARGET_CPA' | 'LOWER_TARGET_ROAS' | 'PERFORMANCE_MAX_OPT_IN' | 'IMPROVE_PERFORMANCE_MAX_AD_STRENGTH' | 'MIGRATE_DYNAMIC_SEARCH_ADS_CAMPAIGN_TO_PERFORMANCE_MAX' | 'FORECASTING_SET_TARGET_CPA' | 'SET_TARGET_CPA' | 'SET_TARGET_ROAS' | 'MAXIMIZE_CONVERSION_VALUE_OPT_IN' | 'IMPROVE_GOOGLE_TAG_COVERAGE' | 'PERFORMANCE_MAX_FINAL_URL_OPT_IN' | 'REFRESH_CUSTOMER_MATCH_LIST' | 'CUSTOM_AUDIENCE_OPT_IN' | 'LEAD_FORM_ASSET' | 'IMPROVE_DEMAND_GEN_AD_STRENGTH' | 'CAMPAIGN_SPECIFIC_APP_GOAL' | 'RAISE_TARGET_CPA_PERFORMANCE_BID_TOO_LOW' | 'LOWER_TARGET_ROAS_PERFORMANCE_BID_TOO_LOW' | 'RAISE_BUDGET_PERFORMANCE_TOO_LOW' | 'OPTIMIZE_FOR_NEW_CUSTOMERS';
 	/** The upgrade a Local campaign to a Performance Max campaign recommendation. */
 	readonly upgradeLocalCampaignToPerformanceMaxRecommendation?: Recommendation_UpgradeLocalCampaignToPerformanceMaxRecommendation;
 	/** The upgrade a Smart Shopping campaign to a Performance Max campaign recommendation. */
@@ -4216,7 +4240,13 @@ export interface RecommendationSubscription {
 	/** Required. Status of the subscription, either enabled or paused. */
 	status?: 'UNSPECIFIED' | 'UNKNOWN' | 'ENABLED' | 'PAUSED';
 	/** Required. Immutable. The type of recommendation subscribed to. */
-	type?: 'UNSPECIFIED' | 'UNKNOWN' | 'CAMPAIGN_BUDGET' | 'KEYWORD' | 'TEXT_AD' | 'TARGET_CPA_OPT_IN' | 'MAXIMIZE_CONVERSIONS_OPT_IN' | 'ENHANCED_CPC_OPT_IN' | 'SEARCH_PARTNERS_OPT_IN' | 'MAXIMIZE_CLICKS_OPT_IN' | 'OPTIMIZE_AD_ROTATION' | 'KEYWORD_MATCH_TYPE' | 'MOVE_UNUSED_BUDGET' | 'FORECASTING_CAMPAIGN_BUDGET' | 'TARGET_ROAS_OPT_IN' | 'RESPONSIVE_SEARCH_AD' | 'MARGINAL_ROI_CAMPAIGN_BUDGET' | 'USE_BROAD_MATCH_KEYWORD' | 'RESPONSIVE_SEARCH_AD_ASSET' | 'UPGRADE_SMART_SHOPPING_CAMPAIGN_TO_PERFORMANCE_MAX' | 'RESPONSIVE_SEARCH_AD_IMPROVE_AD_STRENGTH' | 'DISPLAY_EXPANSION_OPT_IN' | 'UPGRADE_LOCAL_CAMPAIGN_TO_PERFORMANCE_MAX' | 'RAISE_TARGET_CPA_BID_TOO_LOW' | 'FORECASTING_SET_TARGET_ROAS' | 'CALLOUT_ASSET' | 'SITELINK_ASSET' | 'CALL_ASSET' | 'SHOPPING_ADD_AGE_GROUP' | 'SHOPPING_ADD_COLOR' | 'SHOPPING_ADD_GENDER' | 'SHOPPING_ADD_GTIN' | 'SHOPPING_ADD_MORE_IDENTIFIERS' | 'SHOPPING_ADD_SIZE' | 'SHOPPING_ADD_PRODUCTS_TO_CAMPAIGN' | 'SHOPPING_FIX_DISAPPROVED_PRODUCTS' | 'SHOPPING_TARGET_ALL_OFFERS' | 'SHOPPING_FIX_SUSPENDED_MERCHANT_CENTER_ACCOUNT' | 'SHOPPING_FIX_MERCHANT_CENTER_ACCOUNT_SUSPENSION_WARNING' | 'SHOPPING_MIGRATE_REGULAR_SHOPPING_CAMPAIGN_OFFERS_TO_PERFORMANCE_MAX' | 'DYNAMIC_IMAGE_EXTENSION_OPT_IN' | 'RAISE_TARGET_CPA' | 'LOWER_TARGET_ROAS' | 'PERFORMANCE_MAX_OPT_IN' | 'IMPROVE_PERFORMANCE_MAX_AD_STRENGTH' | 'MIGRATE_DYNAMIC_SEARCH_ADS_CAMPAIGN_TO_PERFORMANCE_MAX' | 'FORECASTING_SET_TARGET_CPA' | 'SET_TARGET_CPA' | 'SET_TARGET_ROAS' | 'MAXIMIZE_CONVERSION_VALUE_OPT_IN' | 'IMPROVE_GOOGLE_TAG_COVERAGE' | 'PERFORMANCE_MAX_FINAL_URL_OPT_IN' | 'REFRESH_CUSTOMER_MATCH_LIST' | 'CUSTOM_AUDIENCE_OPT_IN' | 'LEAD_FORM_ASSET' | 'IMPROVE_DEMAND_GEN_AD_STRENGTH' | 'CAMPAIGN_SPECIFIC_APP_GOAL' | 'RAISE_TARGET_CPA_PERFORMANCE_BID_TOO_LOW' | 'LOWER_TARGET_ROAS_PERFORMANCE_BID_TOO_LOW' | 'RAISE_BUDGET_PERFORMANCE_TOO_LOW';
+	type?: 'UNSPECIFIED' | 'UNKNOWN' | 'CAMPAIGN_BUDGET' | 'KEYWORD' | 'TEXT_AD' | 'TARGET_CPA_OPT_IN' | 'MAXIMIZE_CONVERSIONS_OPT_IN' | 'ENHANCED_CPC_OPT_IN' | 'SEARCH_PARTNERS_OPT_IN' | 'MAXIMIZE_CLICKS_OPT_IN' | 'OPTIMIZE_AD_ROTATION' | 'KEYWORD_MATCH_TYPE' | 'MOVE_UNUSED_BUDGET' | 'FORECASTING_CAMPAIGN_BUDGET' | 'TARGET_ROAS_OPT_IN' | 'RESPONSIVE_SEARCH_AD' | 'MARGINAL_ROI_CAMPAIGN_BUDGET' | 'USE_BROAD_MATCH_KEYWORD' | 'RESPONSIVE_SEARCH_AD_ASSET' | 'UPGRADE_SMART_SHOPPING_CAMPAIGN_TO_PERFORMANCE_MAX' | 'RESPONSIVE_SEARCH_AD_IMPROVE_AD_STRENGTH' | 'DISPLAY_EXPANSION_OPT_IN' | 'UPGRADE_LOCAL_CAMPAIGN_TO_PERFORMANCE_MAX' | 'RAISE_TARGET_CPA_BID_TOO_LOW' | 'FORECASTING_SET_TARGET_ROAS' | 'CALLOUT_ASSET' | 'SITELINK_ASSET' | 'CALL_ASSET' | 'SHOPPING_ADD_AGE_GROUP' | 'SHOPPING_ADD_COLOR' | 'SHOPPING_ADD_GENDER' | 'SHOPPING_ADD_GTIN' | 'SHOPPING_ADD_MORE_IDENTIFIERS' | 'SHOPPING_ADD_SIZE' | 'SHOPPING_ADD_PRODUCTS_TO_CAMPAIGN' | 'SHOPPING_FIX_DISAPPROVED_PRODUCTS' | 'SHOPPING_TARGET_ALL_OFFERS' | 'SHOPPING_FIX_SUSPENDED_MERCHANT_CENTER_ACCOUNT' | 'SHOPPING_FIX_MERCHANT_CENTER_ACCOUNT_SUSPENSION_WARNING' | 'SHOPPING_MIGRATE_REGULAR_SHOPPING_CAMPAIGN_OFFERS_TO_PERFORMANCE_MAX' | 'DYNAMIC_IMAGE_EXTENSION_OPT_IN' | 'RAISE_TARGET_CPA' | 'LOWER_TARGET_ROAS' | 'PERFORMANCE_MAX_OPT_IN' | 'IMPROVE_PERFORMANCE_MAX_AD_STRENGTH' | 'MIGRATE_DYNAMIC_SEARCH_ADS_CAMPAIGN_TO_PERFORMANCE_MAX' | 'FORECASTING_SET_TARGET_CPA' | 'SET_TARGET_CPA' | 'SET_TARGET_ROAS' | 'MAXIMIZE_CONVERSION_VALUE_OPT_IN' | 'IMPROVE_GOOGLE_TAG_COVERAGE' | 'PERFORMANCE_MAX_FINAL_URL_OPT_IN' | 'REFRESH_CUSTOMER_MATCH_LIST' | 'CUSTOM_AUDIENCE_OPT_IN' | 'LEAD_FORM_ASSET' | 'IMPROVE_DEMAND_GEN_AD_STRENGTH' | 'CAMPAIGN_SPECIFIC_APP_GOAL' | 'RAISE_TARGET_CPA_PERFORMANCE_BID_TOO_LOW' | 'LOWER_TARGET_ROAS_PERFORMANCE_BID_TOO_LOW' | 'RAISE_BUDGET_PERFORMANCE_TOO_LOW' | 'OPTIMIZE_FOR_NEW_CUSTOMERS';
+}
+
+/** Information about the external redemption provider for a Local Services customer. */
+export interface RedemptionProviderInfo {
+	/** Required. Identifier for a merchant in an external partner's point-of-sale system. */
+	externalMerchantId?: ExternalPartnerMerchantId;
 }
 
 /** A remarketing action. */
@@ -4930,7 +4960,7 @@ export interface Campaign_AssetAutomationSetting {
 	/** The opt-in/out status of asset automation type. */
 	assetAutomationStatus?: 'UNSPECIFIED' | 'UNKNOWN' | 'OPTED_IN' | 'OPTED_OUT';
 	/** The asset automation type advertiser would like to opt-in/out. */
-	assetAutomationType?: 'UNSPECIFIED' | 'UNKNOWN' | 'TEXT_ASSET_AUTOMATION' | 'GENERATE_VERTICAL_YOUTUBE_VIDEOS' | 'GENERATE_SHORTER_YOUTUBE_VIDEOS' | 'GENERATE_LANDING_PAGE_PREVIEW' | 'GENERATE_LANDING_PAGE_TEXT' | 'GENERATE_ENHANCED_YOUTUBE_VIDEOS' | 'GENERATE_IMAGE_ENHANCEMENT' | 'GENERATE_IMAGE_EXTRACTION' | 'GENERATE_DESIGN_VERSIONS_FOR_IMAGES' | 'FINAL_URL_EXPANSION_TEXT_ASSET_AUTOMATION' | 'GENERATE_VIDEOS_FROM_OTHER_ASSETS' | 'GENERATE_ANIMATED_IMAGES_FROM_OTHER_ASSETS' | 'AUTOMATED_VIDEO_CRAWL';
+	assetAutomationType?: 'UNSPECIFIED' | 'UNKNOWN' | 'TEXT_ASSET_AUTOMATION' | 'GENERATE_VERTICAL_YOUTUBE_VIDEOS' | 'GENERATE_SHORTER_YOUTUBE_VIDEOS' | 'GENERATE_LANDING_PAGE_PREVIEW' | 'GENERATE_LANDING_PAGE_TEXT' | 'GENERATE_ENHANCED_YOUTUBE_VIDEOS' | 'GENERATE_IMAGE_ENHANCEMENT' | 'GENERATE_IMAGE_EXTRACTION' | 'GENERATE_DESIGN_VERSIONS_FOR_IMAGES' | 'FINAL_URL_EXPANSION_TEXT_ASSET_AUTOMATION' | 'GENERATE_VIDEOS_FROM_OTHER_ASSETS' | 'GENERATE_ANIMATED_IMAGES_FROM_OTHER_ASSETS' | 'AUTOMATED_VIDEO_CRAWL' | 'OVERLAY_TEXT_ON_VIDEOS';
 	/** Settings for automated video crawling. */
 	automatedVideoCrawlSetting?: CampaignAssetAutomationSetting_AutomatedVideoCrawlSetting;
 }
@@ -5957,6 +5987,12 @@ export interface Recommendation_MoveUnusedBudgetRecommendation {
 
 /** The Optimize Ad Rotation recommendation. */
 export interface Recommendation_OptimizeAdRotationRecommendation {
+}
+
+/** Recommendation to optimize for new customers. */
+export interface Recommendation_OptimizeForNewCustomersRecommendation {
+	/** The recommended incremental conversion value, in the account's local currency, to be added to conversion values for new customers. */
+	readonly recommendedIncrementalConversionValue?: number;
 }
 
 /** Recommendation to turn on Final URL expansion for your Performance Max campaigns. */

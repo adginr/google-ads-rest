@@ -442,6 +442,38 @@ export interface BudgetCampaignAssociationStatus {
 	status?: 'UNSPECIFIED' | 'UNKNOWN' | 'ENABLED' | 'REMOVED';
 }
 
+/** Configures a maximum percentage of the total budget that a network channel can spend. */
+export interface BudgetCapConfig {
+	/** The maximum percentage of the total budget that this network channel can spend, specified in milli-percent units (for example, 100,000 = 100%, 50,000 = 50%, and 1,000 = 1%). int64, sent as a string. */
+	capPercentMillis?: string;
+	/** The network channel being capped. */
+	networkChannel?: 'UNSPECIFIED' | 'UNKNOWN' | 'OWNED_AND_OPERATED' | 'SEARCH_PARTNER' | 'GOOGLE_DISPLAY';
+}
+
+/** Read-only eligibility status and reasons for budget network allocation on a CampaignBudget. */
+export interface BudgetNetworkEligibility {
+	/** True if the budget is eligible for waterfall and budget cap allocation. */
+	readonly eligible?: boolean;
+	/** Reasons why the budget is ineligible, if eligible is false. */
+	readonly ineligibleReasons?: Array<'UNSPECIFIED' | 'UNKNOWN' | 'UNSUPPORTED_BIDDING_STRATEGY' | 'MIXED_CAMPAIGN_TYPES' | 'HAS_ENABLED_TRIALS' | 'UNSUPPORTED_BUDGET_PERIOD' | 'MIXED_BIDDING_STRATEGIES' | 'INSUFFICIENT_ELIGIBLE_CHANNELS'>;
+}
+
+/** Budget allocation setting for a specific advertising channel type (e.g., SEARCH, SHOPPING, PERFORMANCE_MAX, or DEMAND_GEN). */
+export interface BudgetNetworkSetting {
+	/** The advertising channel type this setting applies to (e.g., SEARCH, SHOPPING, PERFORMANCE_MAX, or DEMAND_GEN). */
+	advertisingChannelType?: 'UNSPECIFIED' | 'UNKNOWN' | 'SEARCH' | 'DISPLAY' | 'SHOPPING' | 'HOTEL' | 'VIDEO' | 'MULTI_CHANNEL' | 'LOCAL' | 'SMART' | 'PERFORMANCE_MAX' | 'LOCAL_SERVICES' | 'TRAVEL' | 'DEMAND_GEN';
+	/** Budget caps restricting spend per secondary network channel. */
+	budgetCaps?: Array<BudgetCapConfig>;
+	/** Waterfall priority tiers per network channel. */
+	channelPriorities?: Array<ChannelPriorityConfig>;
+}
+
+/** Container for budget network settings (waterfall channel prioritization and budget allocation). */
+export interface BudgetNetworkSettings {
+	/** List of network allocation settings per advertising channel type. */
+	settings?: Array<BudgetNetworkSetting>;
+}
+
 /** Projected metrics for a specific budget amount. */
 export interface BudgetSimulationPoint {
 	/** Projected number of biddable conversions. */
@@ -690,6 +722,14 @@ export interface ChainSet {
 	chains?: Array<ChainFilter>;
 	/** Required. Immutable. Relationship type the specified chains have with this advertiser. */
 	relationshipType?: 'UNSPECIFIED' | 'UNKNOWN' | 'AUTO_DEALERS' | 'GENERAL_RETAILERS';
+}
+
+/** Configures which network channels belong to a priority tier. */
+export interface ChannelPriorityConfig {
+	/** The network channels assigned to this priority tier. */
+	networkChannels?: Array<'UNSPECIFIED' | 'UNKNOWN' | 'OWNED_AND_OPERATED' | 'SEARCH_PARTNER' | 'GOOGLE_DISPLAY'>;
+	/** The priority tier (e.g., TIER1, TIER2). */
+	priorityTier?: 'UNSPECIFIED' | 'UNKNOWN' | 'TIER1' | 'TIER2';
 }
 
 /** Location criteria associated with a click. */
@@ -1424,6 +1464,24 @@ export interface ExtendedDemographicInfo {
 	extendedDemographicId?: string;
 }
 
+/** The ID of an entity in a partner's system. */
+export interface ExternalPartnerId {
+	/** The ID when the partner's system keys the entity by an integer. int64, sent as a string. */
+	intValue?: string;
+	/** The ID when the partner's system keys the entity by a string. */
+	stringValue?: string;
+}
+
+/** Info related to external promotion redemption. */
+export interface ExternalRedeemInfo {
+	/** Required. Immutable. Code source of the offline promotion. */
+	codeSource?: 'UNSPECIFIED' | 'UNKNOWN' | 'CUSTOMER_UPLOADED' | 'GOOGLE_GENERATED';
+	/** Required. Immutable. Code type of the offline promotion. */
+	codeType?: 'UNSPECIFIED' | 'UNKNOWN' | 'SINGLE_USE_PROMOTION_CODE' | 'MULTI_USE_PROMOTION_CODE';
+	/** Immutable. ID of this promotion in the partner's system that the account is integrated with for redemption tracking. */
+	partnerPromotionId?: ExternalPartnerId;
+}
+
 /** Facebook Messenger information to use for messaging. */
 export interface FacebookMessengerBusinessMessageInfo {
 	/** Required. Facebook page name used for starting a chat on Facebook Messenger. */
@@ -2052,7 +2110,7 @@ export interface LocationAsset {
 
 /** Metadata associated with a Location attribute. */
 export interface LocationAttributeMetadata {
-	/** The country location that this attribute’s sub country location is located in. */
+	/** The country location that this attribute's sub country location is located in. */
 	countryLocation?: LocationInfo;
 }
 
@@ -2820,16 +2878,44 @@ export interface Metrics {
 	trueviewAverageCpv?: number;
 	/** The number of unique users who saw your ad during the requested time period. int64, sent as a string. */
 	uniqueUsers?: string;
+	/** This metric counts the unique individuals who were shown your video ad eight or more times within the selected date range. int64, sent as a string. */
+	uniqueUsersEightPlus?: string;
+	/** Additional information (e.g. */
+	uniqueUsersEightPlusInfo?: ReachMetricInfo;
 	/** This metric counts the unique individuals who were shown your video ad five or more times within the selected date range. int64, sent as a string. */
 	uniqueUsersFivePlus?: string;
+	/** Additional information (e.g. */
+	uniqueUsersFivePlusInfo?: ReachMetricInfo;
 	/** This metric counts the unique individuals who were shown your video ad four or more times within the selected date range. int64, sent as a string. */
 	uniqueUsersFourPlus?: string;
+	/** Additional information (e.g. */
+	uniqueUsersFourPlusInfo?: ReachMetricInfo;
+	/** Additional information (e.g. */
+	uniqueUsersInfo?: ReachMetricInfo;
+	/** This metric counts the unique individuals who were shown your video ad nine or more times within the selected date range. int64, sent as a string. */
+	uniqueUsersNinePlus?: string;
+	/** Additional information (e.g. */
+	uniqueUsersNinePlusInfo?: ReachMetricInfo;
+	/** This metric counts the unique individuals who were shown your video ad seven or more times within the selected date range. int64, sent as a string. */
+	uniqueUsersSevenPlus?: string;
+	/** Additional information (e.g. */
+	uniqueUsersSevenPlusInfo?: ReachMetricInfo;
+	/** This metric counts the unique individuals who were shown your video ad six or more times within the selected date range. int64, sent as a string. */
+	uniqueUsersSixPlus?: string;
+	/** Additional information (e.g. */
+	uniqueUsersSixPlusInfo?: ReachMetricInfo;
 	/** This metric counts the unique individuals who were shown your video ad ten or more times within the selected date range. int64, sent as a string. */
 	uniqueUsersTenPlus?: string;
+	/** Additional information (e.g. */
+	uniqueUsersTenPlusInfo?: ReachMetricInfo;
 	/** This metric counts the unique individuals who were shown your video ad three or more times within the selected date range. int64, sent as a string. */
 	uniqueUsersThreePlus?: string;
+	/** Additional information (e.g. */
+	uniqueUsersThreePlusInfo?: ReachMetricInfo;
 	/** This metric counts the unique individuals who were shown your video ad two or more times within the selected date range. int64, sent as a string. */
 	uniqueUsersTwoPlus?: string;
+	/** Additional information (e.g. */
+	uniqueUsersTwoPlusInfo?: ReachMetricInfo;
 	/** Units sold is the total number of products sold from orders attributed to your ads. */
 	unitsSold?: number;
 	/** The percentage of ad clicks to Accelerated Mobile Pages (AMP) landing pages that reach a valid AMP page. */
@@ -3234,6 +3320,8 @@ export interface PromotionAsset {
 	discountModifier?: 'UNSPECIFIED' | 'UNKNOWN' | 'UP_TO';
 	/** Last date of when this asset is effective and still serving, in yyyy-MM-dd format. */
 	endDate?: string;
+	/** Immutable. Info related to external promotion redemption. */
+	externalRedeemInfo?: ExternalRedeemInfo;
 	/** The language of the promotion. */
 	languageCode?: string;
 	/** Money amount off for discount in the promotion. */
@@ -3288,6 +3376,12 @@ export interface ProximityInfo {
 	radius?: number;
 	/** The unit of measurement of the radius. */
 	radiusUnits?: 'UNSPECIFIED' | 'UNKNOWN' | 'MILES' | 'KILOMETERS';
+}
+
+/** Container for storing the additional information about ad reach. */
+export interface ReachMetricInfo {
+	/** The state of the reach metric, providing additional information on reach metrics. */
+	reachMetricStates?: Array<'UNSPECIFIED' | 'UNKNOWN' | 'COMPLETE' | 'PRIVACY_SUPPRESSION' | 'QUALITY_SUPPRESSION' | 'LOW_QUALITY' | 'DATE_RANGE_BEYOND_RETENTION'>;
 }
 
 /** Settings for Real-Time Bidding, a feature only available for campaigns targeting the Ad Exchange network. */
@@ -3665,7 +3759,7 @@ export interface Segments {
 	/** Quarter as represented by the date of the first day of a quarter. */
 	quarter?: string;
 	/** Recommendation type. */
-	recommendationType?: 'UNSPECIFIED' | 'UNKNOWN' | 'CAMPAIGN_BUDGET' | 'KEYWORD' | 'TEXT_AD' | 'TARGET_CPA_OPT_IN' | 'MAXIMIZE_CONVERSIONS_OPT_IN' | 'ENHANCED_CPC_OPT_IN' | 'SEARCH_PARTNERS_OPT_IN' | 'MAXIMIZE_CLICKS_OPT_IN' | 'OPTIMIZE_AD_ROTATION' | 'KEYWORD_MATCH_TYPE' | 'MOVE_UNUSED_BUDGET' | 'FORECASTING_CAMPAIGN_BUDGET' | 'TARGET_ROAS_OPT_IN' | 'RESPONSIVE_SEARCH_AD' | 'MARGINAL_ROI_CAMPAIGN_BUDGET' | 'USE_BROAD_MATCH_KEYWORD' | 'RESPONSIVE_SEARCH_AD_ASSET' | 'UPGRADE_SMART_SHOPPING_CAMPAIGN_TO_PERFORMANCE_MAX' | 'RESPONSIVE_SEARCH_AD_IMPROVE_AD_STRENGTH' | 'DISPLAY_EXPANSION_OPT_IN' | 'UPGRADE_LOCAL_CAMPAIGN_TO_PERFORMANCE_MAX' | 'RAISE_TARGET_CPA_BID_TOO_LOW' | 'FORECASTING_SET_TARGET_ROAS' | 'CALLOUT_ASSET' | 'SITELINK_ASSET' | 'CALL_ASSET' | 'SHOPPING_ADD_AGE_GROUP' | 'SHOPPING_ADD_COLOR' | 'SHOPPING_ADD_GENDER' | 'SHOPPING_ADD_GTIN' | 'SHOPPING_ADD_MORE_IDENTIFIERS' | 'SHOPPING_ADD_SIZE' | 'SHOPPING_ADD_PRODUCTS_TO_CAMPAIGN' | 'SHOPPING_FIX_DISAPPROVED_PRODUCTS' | 'SHOPPING_TARGET_ALL_OFFERS' | 'SHOPPING_FIX_SUSPENDED_MERCHANT_CENTER_ACCOUNT' | 'SHOPPING_FIX_MERCHANT_CENTER_ACCOUNT_SUSPENSION_WARNING' | 'SHOPPING_MIGRATE_REGULAR_SHOPPING_CAMPAIGN_OFFERS_TO_PERFORMANCE_MAX' | 'DYNAMIC_IMAGE_EXTENSION_OPT_IN' | 'RAISE_TARGET_CPA' | 'LOWER_TARGET_ROAS' | 'PERFORMANCE_MAX_OPT_IN' | 'IMPROVE_PERFORMANCE_MAX_AD_STRENGTH' | 'MIGRATE_DYNAMIC_SEARCH_ADS_CAMPAIGN_TO_PERFORMANCE_MAX' | 'FORECASTING_SET_TARGET_CPA' | 'SET_TARGET_CPA' | 'SET_TARGET_ROAS' | 'MAXIMIZE_CONVERSION_VALUE_OPT_IN' | 'IMPROVE_GOOGLE_TAG_COVERAGE' | 'PERFORMANCE_MAX_FINAL_URL_OPT_IN' | 'REFRESH_CUSTOMER_MATCH_LIST' | 'CUSTOM_AUDIENCE_OPT_IN' | 'LEAD_FORM_ASSET' | 'IMPROVE_DEMAND_GEN_AD_STRENGTH' | 'CAMPAIGN_SPECIFIC_APP_GOAL' | 'RAISE_TARGET_CPA_PERFORMANCE_BID_TOO_LOW' | 'LOWER_TARGET_ROAS_PERFORMANCE_BID_TOO_LOW' | 'RAISE_BUDGET_PERFORMANCE_TOO_LOW';
+	recommendationType?: 'UNSPECIFIED' | 'UNKNOWN' | 'CAMPAIGN_BUDGET' | 'KEYWORD' | 'TEXT_AD' | 'TARGET_CPA_OPT_IN' | 'MAXIMIZE_CONVERSIONS_OPT_IN' | 'ENHANCED_CPC_OPT_IN' | 'SEARCH_PARTNERS_OPT_IN' | 'MAXIMIZE_CLICKS_OPT_IN' | 'OPTIMIZE_AD_ROTATION' | 'KEYWORD_MATCH_TYPE' | 'MOVE_UNUSED_BUDGET' | 'FORECASTING_CAMPAIGN_BUDGET' | 'TARGET_ROAS_OPT_IN' | 'RESPONSIVE_SEARCH_AD' | 'MARGINAL_ROI_CAMPAIGN_BUDGET' | 'USE_BROAD_MATCH_KEYWORD' | 'RESPONSIVE_SEARCH_AD_ASSET' | 'UPGRADE_SMART_SHOPPING_CAMPAIGN_TO_PERFORMANCE_MAX' | 'RESPONSIVE_SEARCH_AD_IMPROVE_AD_STRENGTH' | 'DISPLAY_EXPANSION_OPT_IN' | 'UPGRADE_LOCAL_CAMPAIGN_TO_PERFORMANCE_MAX' | 'RAISE_TARGET_CPA_BID_TOO_LOW' | 'FORECASTING_SET_TARGET_ROAS' | 'CALLOUT_ASSET' | 'SITELINK_ASSET' | 'CALL_ASSET' | 'SHOPPING_ADD_AGE_GROUP' | 'SHOPPING_ADD_COLOR' | 'SHOPPING_ADD_GENDER' | 'SHOPPING_ADD_GTIN' | 'SHOPPING_ADD_MORE_IDENTIFIERS' | 'SHOPPING_ADD_SIZE' | 'SHOPPING_ADD_PRODUCTS_TO_CAMPAIGN' | 'SHOPPING_FIX_DISAPPROVED_PRODUCTS' | 'SHOPPING_TARGET_ALL_OFFERS' | 'SHOPPING_FIX_SUSPENDED_MERCHANT_CENTER_ACCOUNT' | 'SHOPPING_FIX_MERCHANT_CENTER_ACCOUNT_SUSPENSION_WARNING' | 'SHOPPING_MIGRATE_REGULAR_SHOPPING_CAMPAIGN_OFFERS_TO_PERFORMANCE_MAX' | 'DYNAMIC_IMAGE_EXTENSION_OPT_IN' | 'RAISE_TARGET_CPA' | 'LOWER_TARGET_ROAS' | 'PERFORMANCE_MAX_OPT_IN' | 'IMPROVE_PERFORMANCE_MAX_AD_STRENGTH' | 'MIGRATE_DYNAMIC_SEARCH_ADS_CAMPAIGN_TO_PERFORMANCE_MAX' | 'FORECASTING_SET_TARGET_CPA' | 'SET_TARGET_CPA' | 'SET_TARGET_ROAS' | 'MAXIMIZE_CONVERSION_VALUE_OPT_IN' | 'IMPROVE_GOOGLE_TAG_COVERAGE' | 'PERFORMANCE_MAX_FINAL_URL_OPT_IN' | 'REFRESH_CUSTOMER_MATCH_LIST' | 'CUSTOM_AUDIENCE_OPT_IN' | 'LEAD_FORM_ASSET' | 'IMPROVE_DEMAND_GEN_AD_STRENGTH' | 'CAMPAIGN_SPECIFIC_APP_GOAL' | 'RAISE_TARGET_CPA_PERFORMANCE_BID_TOO_LOW' | 'LOWER_TARGET_ROAS_PERFORMANCE_BID_TOO_LOW' | 'RAISE_BUDGET_PERFORMANCE_TOO_LOW' | 'OPTIMIZE_FOR_NEW_CUSTOMERS';
 	/** Type of the search engine results page. */
 	searchEngineResultsPageType?: 'UNSPECIFIED' | 'UNKNOWN' | 'ADS_ONLY' | 'ORGANIC_ONLY' | 'ADS_AND_ORGANIC';
 	/** The Search Lift Keyword Bundle resource name. */
@@ -3898,7 +3992,7 @@ export interface StructuredSnippetAsset {
 export interface SyntheticContentAttestation {
 	/** The source of the synthetic content attestation. */
 	source?: 'UNSPECIFIED' | 'UNKNOWN' | 'ADVERTISER_ATTESTED' | 'GOOGLE_GENERATED_ADVERTISER_REVIEWED' | 'GOOGLE_GENERATED_FULLY_AUTOMATED';
-	/** Indicates whether the content is considered synthetic by this source. */
+	/** Indicates the attestation status for whether the content should be labeled as created or edited with AI by this source. */
 	status?: 'UNSPECIFIED' | 'UNKNOWN' | 'NOT_SYNTHETIC' | 'IS_SYNTHETIC';
 }
 
