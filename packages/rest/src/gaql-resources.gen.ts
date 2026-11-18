@@ -90,6 +90,7 @@ export const GAQL_RESOURCES = [
 	'customer',
 	'customer_asset',
 	'customer_asset_set',
+	'customer_budget_network_setting',
 	'customer_client',
 	'customer_client_link',
 	'customer_conversion_goal',
