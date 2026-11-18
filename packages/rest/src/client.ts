@@ -9,7 +9,7 @@
  * REST reference: https://developers.google.com/google-ads/api/rest/overview
  */
 import { GOOGLE_ADS_API_VERSION } from './api-version.ts';
-import { GoogleAdsError } from './errors.ts';
+import { GoogleAdsError, type GoogleAdsErrorEntry } from './errors.ts';
 import type { resources, services } from './types/index.ts';
 
 const API_BASE = `https://googleads.googleapis.com/${GOOGLE_ADS_API_VERSION}`;
@@ -33,6 +33,26 @@ export type GoogleAdsRow = services.GoogleAdsRow;
 export interface MutateOptions {
 	/** Validate the request without executing it. Nothing is created; results carry no resource names. */
 	validateOnly?: boolean;
+}
+
+/** Google's limit on conversions per UploadClickConversions request. */
+export const MAX_CLICK_CONVERSIONS_PER_REQUEST = 2000;
+
+/** `yyyy-mm-dd hh:mm:ss+|-hh:mm`, the only date time format ConversionUploadService accepts. */
+const CONVERSION_DATE_TIME = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2}$/;
+
+export interface UploadClickConversionsOptions extends MutateOptions {
+	/** Groups uploads under one ID in the offline data diagnostics. Google assigns one when omitted. */
+	jobId?: number;
+}
+
+export interface UploadClickConversionsResult {
+	/** Upload job ID (int64 as a string), as shown in the offline data diagnostics. */
+	jobId?: string;
+	/** One entry per conversion sent, in the same order: Google's result, or `null` when it failed. */
+	results: Array<services.ClickConversionResult | null>;
+	/** Conversions Google rejected; `index` is the position in the `conversions` you passed. */
+	failures: Array<GoogleAdsErrorEntry & { index?: number }>;
 }
 
 export class GoogleAdsClient {
@@ -112,6 +132,70 @@ export class GoogleAdsClient {
 			);
 		}
 		return results;
+	}
+
+	/**
+	 * Imports offline click conversions (ConversionUploadService.UploadClickConversions), up to 2000 per call.
+	 * Always runs with partial failure: valid conversions are imported, rejected ones come back in `failures`
+	 * with their index, and the call itself throws only when the whole request fails.
+	 *
+	 * Each conversion needs `conversionAction` (resource name), `conversionDateTime`
+	 * (`yyyy-mm-dd hh:mm:ss+hh:mm`) and a click identifier (`gclid`, `gbraid`, `wbraid`) or
+	 * `userIdentifiers` (enhanced conversions for leads). These are checked before any request.
+	 * https://developers.google.com/google-ads/api/docs/conversions/upload-offline
+	 */
+	async uploadClickConversions(
+		customerId: string,
+		conversions: services.ClickConversion[],
+		{ validateOnly = false, jobId }: UploadClickConversionsOptions = {}
+	): Promise<UploadClickConversionsResult> {
+		if (!conversions.length) {
+			throw new GoogleAdsError('uploadClickConversions needs at least one conversion.');
+		}
+		if (conversions.length > MAX_CLICK_CONVERSIONS_PER_REQUEST) {
+			throw new GoogleAdsError(
+				`uploadClickConversions takes at most ${MAX_CLICK_CONVERSIONS_PER_REQUEST} conversions per call, got ${conversions.length}.`
+			);
+		}
+		conversions.forEach((conversion, index) => {
+			const problem = !conversion.conversionAction
+				? 'conversionAction is required'
+				: !conversion.conversionDateTime
+					? 'conversionDateTime is required'
+					: !CONVERSION_DATE_TIME.test(conversion.conversionDateTime)
+						? `conversionDateTime must look like '2026-11-18 14:05:00+04:00', got '${conversion.conversionDateTime}'`
+						: !conversion.gclid &&
+							  !conversion.gbraid &&
+							  !conversion.wbraid &&
+							  !conversion.userIdentifiers?.length
+							? 'needs gclid, gbraid, wbraid or userIdentifiers'
+							: undefined;
+			if (problem) throw new GoogleAdsError(`conversions[${index}]: ${problem}.`);
+		});
+
+		const body = await this.#request<services.UploadClickConversionsResponse>(
+			'POST',
+			`/customers/${customerId}:uploadClickConversions`,
+			{
+				conversions,
+				partialFailure: true,
+				validateOnly,
+				jobId
+			} satisfies services.UploadClickConversionsRequest
+		);
+
+		const failures = body.partialFailureError
+			? GoogleAdsError.fromStatus(body.partialFailureError).errors.map((entry) => {
+					const index = /^conversions\[(\d+)\]/.exec(entry.field ?? '')?.[1];
+					return { ...entry, index: index === undefined ? undefined : Number(index) };
+				})
+			: [];
+		const failed = new Set(failures.map((failure) => failure.index));
+		const results = conversions.map((_, index) => {
+			const result = body.results?.[index];
+			return failed.has(index) || !result || !Object.keys(result).length ? null : result;
+		});
+		return { jobId: body.jobId, results, failures };
 	}
 
 	/** Keyword Planner ideas (KeywordPlanIdeaService.GenerateKeywordIdeas), following pagination. */

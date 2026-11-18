@@ -63,6 +63,18 @@ await ads.listAccessibleCustomers(); // ['customers/1234567890', …]
 await ads.generateKeywordIdeas('1234567890', { keywordSeed: { keywords: ['car lease'] } });
 await ads.suggestGeoTargetConstants(['Mün'], { locale: 'de', countryCode: 'DE' });
 await ads.searchFields("SELECT name, selectable WHERE name LIKE 'campaign.%'");
+
+// Offline click conversions, up to 2000 per call. Partial failure: valid ones are imported, the rest are
+// reported in `failures` with their index. validateOnly makes it a dry run.
+const { results, failures } = await ads.uploadClickConversions('1234567890', [
+  {
+    conversionAction: resourceNames.conversionAction('1234567890', '555'),
+    conversionDateTime: '2026-11-18 14:05:00+04:00',
+    gclid: 'Cj0KCQ…',
+    conversionValue: 250,
+    currencyCode: 'AED'
+  }
+]);
 ```
 
 REST returns int64 values (IDs, metrics, `*Micros`) as strings and omits fields that hold their default
