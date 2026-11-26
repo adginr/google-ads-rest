@@ -23,11 +23,11 @@
 		"@changesets/cli": "^3.0.3",
 		"@types/node": "^24",
 		"oxlint": "^1.94.0",
-		"oxlint-tsgolint": "^7.0.2007",
+		"oxlint-tsgolint": "^7.0.2008",
 		"prettier": "^3.10.1",
 		"publint": "^0.3.25",
 		"tsdown": "^0.23.7",
 		"typescript": "~7.0.2",
-		"vitest": "^5.1.0"
+		"vitest": "^5.1.1"
 	}
 }
